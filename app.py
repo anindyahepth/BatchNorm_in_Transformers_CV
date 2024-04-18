@@ -57,7 +57,8 @@ def transform_image(image):
     return processed_image
 
     
-    
+def get_model():
+	
 model = ViTBN(
                 image_size = 28,
                 patch_size = 7,
@@ -75,12 +76,14 @@ model = ViTBN(
 
 model.load_state_dict(torch.load("model100epoch_mnist.pth"))
 model.eval()
+return model
 
 
 def make_predictions(image_file): 
     
     input_tensor = transform_image(image_file) 
     input_tensor = torch.reshape(input_tensor[3], [1, 1, 28, 28])
+    model = get_model()
     outputs = model(input_tensor) 
     softmax_layer = torch.nn.Softmax(1)
     outputs = softmax_layer(outputs)
