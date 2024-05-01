@@ -8,7 +8,8 @@ a ViTBN (Vision Transformer with BatchNorm).
 
 Training on the FashionMNIST(FMNIST) and MNIST datasets from scratch, we see that ViTBN 
 is about 3-4 times faster compared to the vanilla ViT per epoch both during training 
-and validation.  
+and validation. In addition, the former reaches the highest accuracy after training for 
+a far fewer number of epochs. 
 
 
 
