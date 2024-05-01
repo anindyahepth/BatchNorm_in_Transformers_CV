@@ -11,6 +11,12 @@ is about 3-4 times faster compared to the vanilla ViT per epoch both during trai
 and validation. In addition, the former reaches the highest accuracy after training for 
 a far fewer number of epochs. 
 
+Finally, we train ViTBN on the MNIST data for 100 epochs and use the trained model to 
+build a Flask-based app for recognizing handwritten digits. The webapp can be found 
+here : https://anindyadey.pythonanywhere.com/
+
+
+The model 
 
 from model.vitbnv1 import ViTBN
 
@@ -34,4 +40,4 @@ model = ViTBN(
 
 
 
-https://anindyadey.pythonanywhere.com/
+
