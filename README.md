@@ -12,6 +12,25 @@ and validation. In addition, the former reaches the highest accuracy after train
 a far fewer number of epochs. 
 
 
+from model.vitbnv1 import ViTBN
+
+model = ViTBN(
+                image_size = 28,
+                patch_size = 7,
+                num_classes = 26,
+                channels =1,
+                dim = 64,
+                depth = 6,
+                heads = 8,
+                mlp_dim = 128,
+                pool = 'cls',
+                dropout = 0.0,
+                emb_dropout = 0.0,
+                pos_emb ='learn'
+    )
+
+
+
 
 
 
