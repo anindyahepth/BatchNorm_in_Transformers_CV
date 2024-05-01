@@ -6,7 +6,9 @@ models tailored to Computer Vision tasks. As a first step, we implement a batchn
 in the Feed Forward Netweork (FFN) component of a Vision Transformer (ViT). We call this 
 a ViTBN (Vision Transformer with BatchNorm).
 
-Training on the FashionMNIST(FMNIST) and MNIST datasets from scratch, we see that Vit
+Training on the FashionMNIST(FMNIST) and MNIST datasets from scratch, we see that ViTBN 
+is about 3-4 times faster compared to the vanilla ViT per epoch both during training 
+and validation.  
 
 
 
