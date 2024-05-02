@@ -29,13 +29,15 @@ model = ViTBN(
                 dim = 64,
                 depth = 6,
                 heads = 8,
+                dim_head = 64,
                 mlp_dim = 128,
-                pool = 'cls',
+                pool = 'cls' or 'mean',
                 dropout = 0.0,
                 emb_dropout = 0.0,
-                pos_emb ='learn'
+                pos_emb ='learn' or 'pe1d'
     )
 ```
+One can choose either cls tokens or a global pooling to implement the 
 
 
 
