@@ -18,6 +18,7 @@ here : https://anindyadey.pythonanywhere.com/
 
 The model 
 
+```
 from model.vitbnv1 import ViTBN
 
 model = ViTBN(
@@ -34,6 +35,7 @@ model = ViTBN(
                 emb_dropout = 0.0,
                 pos_emb ='learn'
     )
+```
 
 
 
