@@ -7,9 +7,10 @@ in the Feed Forward Netweork (FFN) component of the standard Vision Transformer 
 We call this a ViTBN (Vision Transformer with BatchNorm).
 
 Training on the FashionMNIST(FMNIST) and MNIST datasets from scratch, we see that ViTBN 
-is about 3-4 times faster compared to the vanilla ViT per epoch both during training 
-and validation. In addition, the former reaches the highest accuracy after training for 
-a far fewer number of epochs. 
+is about 3 times faster compared to the standard ViT per epoch both during training phase
+and about 5 times faster during the testing phase. In addition, the former reaches the 
+highest accuracy after training for a far fewer number of epochs. The relevant graphs are 
+attached and explained below. 
 
 Finally, we train ViTBN on the MNIST data for 100 epochs and use the trained model to 
 build a Flask-based app for recognizing handwritten digits. The webapp can be found 
@@ -46,8 +47,7 @@ sinusoidal vector, indicated by setting 'pos_emb ' to 'learn' or 'pe1d' respecti
 
 ![TestDur](https://github.com/anindyahepth/BatchNorm_in_Transformers_CV/assets/129802283/5d446ef1-11c7-446f-8020-9af584df01ac)
 
-![TestAcc](https://github.com/anindyahepth/BatchNorm_in_Transformers_CV/assets/129802283/6606ca3c-ec50-41d2-ad5e-ac9f5577e18e)
-
+![TestAcc](https://github.com/anindyahepth/BatchNorm_in_Transformers_CV/assets/129802283/91bab246-f389-48ea-9713-793e47ff6f5b)
 
 
 
