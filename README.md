@@ -7,7 +7,7 @@ in the Feed Forward Netweork (FFN) component of the standard Vision Transformer 
 We call this a ViTBN (Vision Transformer with BatchNorm).
 
 Training on the FashionMNIST(FMNIST) and MNIST datasets from scratch, we see that ViTBN 
-is about 3 times faster compared to the standard ViT per epoch both during training phase
+is about 3-6 times faster compared to the standard ViT per epoch both during training phase
 and about 5 times faster during the testing phase. In addition, the former reaches the 
 highest accuracy after training for a far fewer number of epochs. The relevant graphs are 
 attached and explained below. 
@@ -41,6 +41,35 @@ model = ViTBN(
 One can choose either cls tokens or a global pooling to implement the final classification using the MLP head, indicated 
 by setting `pool' to 'cls' or 'mean' respectively. One can also choose a learnable positional encoding vector or a 1d 
 sinusoidal vector, indicated by setting 'pos_emb ' to 'learn' or 'pe1d' respectively.
+
+For the ViT/ViTBN comparison using the FMNIST dataset, we use the following set of parameters for the two models:
+```
+ViT(image_size = 28,
+    patch_size = 7,
+    num_classes = 10,
+    channels =1,
+    dim = 64,
+    depth = 6,
+    heads = 8,
+    mlp_dim = 128,
+    pool = 'cls',
+    dropout = 0.0,
+    emb_dropout = 0.0),
+
+ViTBN(image_size = 28,
+    patch_size = 7,
+    num_classes = 10,
+    channels =1,
+    dim = 64,
+    depth = 6,
+    heads = 8,
+    mlp_dim = 128,
+    pool = 'cls',
+    dropout = 0.0,
+    emb_dropout = 0.0,
+    pos_emb ='learn'
+
+```
 
 ![TrainDur](https://github.com/anindyahepth/BatchNorm_in_Transformers_CV/assets/129802283/d1a0a7fd-f6e1-4e64-8872-a1520a64460b)
 
