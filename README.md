@@ -1,6 +1,6 @@
 
 Batch Normalization is a powerful regularization method for Neural Networks which can 
-substantially speed up the training process by allowing a higher learning rate and 
+substantially speed up the learning process by allowing a higher learning rate and 
 removing dropout. We investigate the impact of Batch Normalization in Transformer-based 
 models tailored to Computer Vision tasks. As a first step, we implement a batchnorm layer 
 in the Feed Forward Netweork (FFN) component of the standard Vision Transformer (ViT). 
@@ -70,8 +70,8 @@ ViTBN(image_size = 28,
     pos_emb ='learn'
 
 ```
-Note that ViT uses the learned positional embedding if 'pool' = 'cls'. For both models, we use a learning rate 0.005. 
-The results for 10 epochs of training/testing are shown below. 
+Note that ViT uses the learned positional embedding if 'pool' = 'cls'. For both models, we use a learning rate 0.005, 
+and set all dropout parameters to zero. The results for 10 epochs of training/testing are shown below. 
 
 ![TrainDur](https://github.com/anindyahepth/BatchNorm_in_Transformers_CV/assets/129802283/d1a0a7fd-f6e1-4e64-8872-a1520a64460b)
 
