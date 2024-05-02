@@ -43,9 +43,10 @@ sinusoidal vector, indicated by setting 'pos_emb ' to 'learn' or 'pe1d' respecti
 
 ![TrainDur](https://github.com/anindyahepth/BatchNorm_in_Transformers_CV/assets/129802283/d1a0a7fd-f6e1-4e64-8872-a1520a64460b)
 
-![TestAcc](https://github.com/anindyahepth/BatchNorm_in_Transformers_CV/assets/129802283/6606ca3c-ec50-41d2-ad5e-ac9f5577e18e)
 
 ![TestDur](https://github.com/anindyahepth/BatchNorm_in_Transformers_CV/assets/129802283/5d446ef1-11c7-446f-8020-9af584df01ac)
+
+![TestAcc](https://github.com/anindyahepth/BatchNorm_in_Transformers_CV/assets/129802283/6606ca3c-ec50-41d2-ad5e-ac9f5577e18e)
 
 
 
