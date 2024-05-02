@@ -5,7 +5,6 @@ removing dropout. We investigate the impact of Batch Normalization in Transforme
 models tailored to Computer Vision tasks. As a first step, we implement a batchnorm layer 
 in the Feed Forward Netweork (FFN) component of the standard Vision Transformer (ViT). 
 We call this a ViTBN (Vision Transformer with BatchNorm).
-![TrainDur](https://github.com/anindyahepth/BatchNorm_in_Transformers_CV/assets/129802283/d1a0a7fd-f6e1-4e64-8872-a1520a64460b)
 
 Training on the FashionMNIST(FMNIST) and MNIST datasets from scratch, we see that ViTBN 
 is about 3-4 times faster compared to the vanilla ViT per epoch both during training 
@@ -41,6 +40,14 @@ model = ViTBN(
 One can choose either cls tokens or a global pooling to implement the final classification using the MLP head, indicated 
 by setting `pool' to 'cls' or 'mean' respectively. One can also choose a learnable positional encoding vector or a 1d 
 sinusoidal vector, indicated by setting 'pos_emb ' to 'learn' or 'pe1d' respectively.
+
+![TrainDur](https://github.com/anindyahepth/BatchNorm_in_Transformers_CV/assets/129802283/d1a0a7fd-f6e1-4e64-8872-a1520a64460b)
+
+![TestAcc](https://github.com/anindyahepth/BatchNorm_in_Transformers_CV/assets/129802283/6606ca3c-ec50-41d2-ad5e-ac9f5577e18e)
+
+![TestDur](https://github.com/anindyahepth/BatchNorm_in_Transformers_CV/assets/129802283/5d446ef1-11c7-446f-8020-9af584df01ac)
+
+
 
 
 
