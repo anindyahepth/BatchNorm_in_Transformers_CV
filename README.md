@@ -37,7 +37,9 @@ model = ViTBN(
                 pos_emb ='learn' or 'pe1d'
     )
 ```
-One can choose either cls tokens or a global pooling to implement the 
+One can choose either cls tokens or a global pooling to implement the final classification using the MLP head, indicated 
+by setting `pool' to 'cls' or 'mean' respectively. One can also choose a learnable positional encoding vector or a 1d 
+sinusoidal vector, indicated by setting 'pos_emb ' to 'learn' or 'pe1d' respectively.
 
 
 
