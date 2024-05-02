@@ -70,6 +70,8 @@ ViTBN(image_size = 28,
     pos_emb ='learn'
 
 ```
+Note that ViT uses the learned positional embedding if 'pool' = 'cls'. For both models, we use a learning rate 0.005. 
+The results for 10 epochs of training/testing are shown below. 
 
 ![TrainDur](https://github.com/anindyahepth/BatchNorm_in_Transformers_CV/assets/129802283/d1a0a7fd-f6e1-4e64-8872-a1520a64460b)
 
