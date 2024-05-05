@@ -12,11 +12,6 @@ and about 5 times faster during the testing phase. In addition, the former reach
 highest accuracy after training for a far fewer number of epochs. The relevant graphs are 
 attached and explained below. 
 
-Finally, we train ViTBN on the MNIST data for 100 epochs and use the trained model to 
-build a Flask-based app for recognizing handwritten digits. The webapp can be found 
-here : https://anindyadey.pythonanywhere.com/
-
-
 The model can be loaded and used as follows. 
 
 ```
@@ -81,7 +76,10 @@ and set all dropout parameters to zero. The results for 10 epochs of training/te
 ![TestAcc](https://github.com/anindyahepth/BatchNorm_in_Transformers_CV/assets/129802283/91bab246-f389-48ea-9713-793e47ff6f5b)
 
 
-
+Finally, we train ViTBN on the MNIST data for 100 epochs and use the trained model to 
+build a web app for recognizing handwritten digits. The webapp can be found 
+here : https://anindyadey.pythonanywhere.com/
+The app has an html-css-javascript frontend and a Flask backend. 
 
 
 
