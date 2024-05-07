@@ -4,7 +4,8 @@ substantially speed up the learning process by allowing a higher learning rate a
 removing dropout. We investigate the impact of Batch Normalization in Transformer-based 
 models tailored to Computer Vision tasks. As a first step, we implement a batchnorm layer 
 in the Feed Forward Netweork (FFN) component of the standard Vision Transformer (ViT). 
-We call this a ViTBN (Vision Transformer with BatchNorm).
+The batchnorm layer acts before the nonlinear activation function. We call this a 
+\textbf{ViTBN} (Vision Transformer with BatchNorm) model.
 
 Training on the FashionMNIST(FMNIST) and MNIST datasets from scratch, we see that ViTBN 
 is about 3-6 times faster compared to the standard ViT per epoch both during training phase
