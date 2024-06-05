@@ -140,7 +140,7 @@ def get_model():
 
 if __name__ == "__main__":
 
-    mlflow.tensorflow.autolog()
+    #mlflow.tensorflow.autolog()
 
 
     learning_rate = 0.001
