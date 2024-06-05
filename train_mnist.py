@@ -11,6 +11,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torchvision
+import torchvision.datasets as dsets
 import torchvision.transforms as transforms
 import numpy as np
 import matplotlib.pyplot as plt
@@ -22,19 +23,32 @@ import os
 from model.vitbnv1 import ViTBN
 
 import mlflow
-from dagshub import dagshub_logger
+#from dagshub import dagshub_logger
 
-mlflow.set_tracking_uri("https://dagshub.com/anindyahepth/BatchNorm_in_Transformers_CV")
-os.environ['MLFLOW_TRACKING_USERNAME'] = USER_NAME
-os.environ['MLFLOW_TRACKING_PASSWORD'] = PASSWORD
-
-
+#mlflow.set_tracking_uri("https://dagshub.com/anindyahepth/BatchNorm_in_Transformers_CV")
+#os.environ['MLFLOW_TRACKING_USERNAME'] = USER_NAME
+#os.environ['MLFLOW_TRACKING_PASSWORD'] = PASSWORD
 
 
 
 
+def get_datasets() :
+  data_transform = transforms.Compose([
+    transforms.Resize(28),
+    transforms.ToTensor()
+    ])
 
-def train_model(model,train_loader,validation_loader,optimizer,criterion,n_epochs):
+  #Load training data
+
+  train_dataset = dsets.MNIST(root='./data', train=True, download=True, transform= data_transform)
+
+  #Load validation data
+  validation_dataset = dsets.MNIST(root='./data', train=False, download=True, transform= data_transform)
+
+  return train_dataset, validation_dataset
+
+
+def train_model(model,train_loader,validation_loader, validation_dataset, optimizer,criterion,n_epochs):
 
     #global variable
     N_test=len(validation_dataset)
@@ -63,7 +77,7 @@ def train_model(model,train_loader,validation_loader,optimizer,criterion,n_epoch
             optimizer.step()
             COST+=loss.data
             #loss_list.append(loss.data)
-        cost_list.append(COST)
+        #cost_list.append(COST)
         dur_list_train.append(time.perf_counter()-t0)
 
         correct = 0
@@ -94,23 +108,10 @@ def train_model(model,train_loader,validation_loader,optimizer,criterion,n_epoch
         accuracy_list.append(accuracy)
         dur_list_val.append(time.perf_counter()-t1)
 
-    return cost_list, accuracy_list, dur_list_train, dur_list_val, class_accuracy
+    return accuracy_list, dur_list_train, dur_list_val, class_accuracy
 
 
-def get_datasets() :
-  data_transform = transforms.Compose([
-    transforms.Resize(28),
-    transforms.ToTensor()
-    ])
 
-  #Load training data
-
-  train_dataset = dsets.MNIST(root='./data', train=True, download=True, transform= data_transform)
-
-  #Load validation data
-  validation_dataset = dsets.MNIST(root='./data', train=False, download=True, transform= data_transform)
-
-  return train_dataset, validation_dataset
 
 
 def get_model():
@@ -129,9 +130,9 @@ def get_model():
                 pos_emb ='learn'
     )
 
-    model.load_state_dict(torch.load("model100epoch_mnist.pth"))
+  model.load_state_dict(torch.load("model100epoch_mnist.pth"))
 
-    return model
+  return model
 
 
 
@@ -142,12 +143,12 @@ if __name__ == "__main__":
     mlflow.tensorflow.autolog()
 
 
-    learning_rate = = 0.001
+    learning_rate = 0.001
     n_epochs = 1
     criterion = nn.CrossEntropyLoss()
 
-    with mlflow.start_run():
-        training_set, validation_set, test_set = get_datasets()
+    with mlflow.start_run(experiment_id=561738204043572503):
+        train_dataset, validation_dataset = get_datasets()
         model = get_model()
 
 
@@ -155,16 +156,16 @@ if __name__ == "__main__":
         train_loader = torch.utils.data.DataLoader(dataset=train_dataset, batch_size=100,shuffle=True)
         validation_loader = torch.utils.data.DataLoader(dataset=validation_dataset, batch_size=5000, shuffle=True)
 
-        cost_list, accuracy_list, dur_list_train, dur_list_val, class_accuracy = train_model(model,train_loader,validation_loader,optimizer,criterion,n_epochs)
+        accuracy_list, dur_list_train, dur_list_val, class_accuracy = train_model(model,train_loader,validation_loader,validation_dataset,optimizer,criterion,n_epochs)
 
 
 
-        with dagshub_logger() as logger:
-            logger.log_metrics(loss_tr=cost_list, accuracy_val=accuracy_list, time_tr = dur_list_train, time_val=dur_list_val)
-            logger.log_hyperparams({
-                "learning_rate": learning_rate,
-                "epochs": n_epochs
-            })
+      #  with dagshub_logger() as logger:
+      #      logger.log_metrics(loss_tr=cost_list, accuracy_val=accuracy_list, time_tr = dur_list_train, time_val=dur_list_val)
+      #     logger.log_hyperparams({
+      #         "learning_rate": learning_rate,
+      #         "epochs": n_epochs
+      #      })
 
         mlflow.log_params({
             "learning_rate": learning_rate,
@@ -172,7 +173,7 @@ if __name__ == "__main__":
         })
         mlflow.log_metrics(
             {
-                "training_loss": cost_list,
+                #"training_loss": cost_list,
                 "validation_accuracy": accuracy_list,
                 "training_time": dur_list_train,
                 "validation_time": dur_list_val
