@@ -105,12 +105,12 @@ def get_datasets() :
 
   #Load training data
 
-   train_dataset = dsets.MNIST(root='./data', train=True, download=True, transform= data_transform)
+  train_dataset = dsets.MNIST(root='./data', train=True, download=True, transform= data_transform)
 
   #Load validation data
-   validation_dataset = dsets.MNIST(root='./data', train=False, download=True, transform= data_transform)
+  validation_dataset = dsets.MNIST(root='./data', train=False, download=True, transform= data_transform)
 
-   return train_dataset, validation_dataset
+  return train_dataset, validation_dataset
 
 
 def get_model():
