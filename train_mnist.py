@@ -108,7 +108,7 @@ def train_model(model,train_loader,validation_loader, validation_dataset, optimi
         accuracy_list.append(accuracy)
         dur_list_val.append(time.perf_counter()-t1)
 
-    return accuracy_list, dur_list_train, dur_list_val, class_accuracy
+    return np.double(accuracy_list), np.double(dur_list_train), np.double(dur_list_val), np.double(class_accuracy)
 
 
 
