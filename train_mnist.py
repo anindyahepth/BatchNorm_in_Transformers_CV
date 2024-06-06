@@ -77,7 +77,7 @@ def train_model(model,train_loader,validation_loader, validation_dataset, optimi
             optimizer.step()
             COST+=loss.data
             #loss_list.append(loss.data)
-        #cost_list.append(COST)
+        cost_list.append(COST)
         dur_list_train.append(time.perf_counter()-t0)
 
         correct = 0
@@ -108,7 +108,7 @@ def train_model(model,train_loader,validation_loader, validation_dataset, optimi
         accuracy_list.append(accuracy)
         dur_list_val.append(time.perf_counter()-t1)
 
-    return np.double(accuracy_list), np.double(dur_list_train), np.double(dur_list_val), np.double(class_accuracy)
+    return cost_list, accuracy_list, dur_list_train, dur_list_val, class_accuracy
 
 
 
@@ -156,7 +156,7 @@ if __name__ == "__main__":
         train_loader = torch.utils.data.DataLoader(dataset=train_dataset, batch_size=100,shuffle=True)
         validation_loader = torch.utils.data.DataLoader(dataset=validation_dataset, batch_size=5000, shuffle=True)
 
-        accuracy_list, dur_list_train, dur_list_val, class_accuracy = train_model(model,train_loader,validation_loader,validation_dataset,optimizer,criterion,n_epochs)
+        cost_list, accuracy_list, dur_list_train, dur_list_val, class_accuracy = train_model(model,train_loader,validation_loader,validation_dataset,optimizer,criterion,n_epochs)
 
 
 
