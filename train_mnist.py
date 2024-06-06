@@ -171,15 +171,17 @@ if __name__ == "__main__":
             "learning_rate": learning_rate,
             "epochs": n_epochs
         })
-        mlflow.log_metrics(
+        
+        for i in range(n_epochs):
+        	mlflow.log_metrics(
             {
-                #"training_loss": cost_list,
-                "validation_accuracy": accuracy_list,
-                "training_time": dur_list_train,
-                "validation_time": dur_list_val
-            }
+                "training_loss": cost_list[i],
+                "validation_accuracy": accuracy_list[i],
+                "training_time": dur_list_train[i],
+                "validation_time": dur_list_val[i]
+            },step = i+1
         )
 
-        print("Saving the model...")
-        model.save("model")
+        #print("Saving the model...")
+        #model.save("model")
         print("done.")
