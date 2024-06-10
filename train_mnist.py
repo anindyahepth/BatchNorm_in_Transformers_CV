@@ -23,6 +23,9 @@ import os
 from model.vitbnv1 import ViTBN
 
 import mlflow
+
+mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI"))
+
 #from dagshub import dagshub_logger
 
 #mlflow.set_tracking_uri("https://dagshub.com/anindyahepth/BatchNorm_in_Transformers_CV")
@@ -60,13 +63,13 @@ def train_model(model,train_loader,validation_loader, validation_dataset, optimi
     class_correct = [[0.for i in range(10)] for j in range(n_epochs)]
     class_total= [[0.for i in range (10)] for j in range(n_epochs)]
     class_accuracy =[[0.for i in range(10)] for j in range(n_epochs)]
-    COST=0
-    correct=0
+    COST=0.
+    correct=0.
     time_train_start=time.perf_counter()
     time_val_start=time.perf_counter()
 
     for epoch in range(n_epochs):
-        COST=0
+        COST=0.
         for x, y in train_loader:
             t0 = time.perf_counter()
             optimizer.zero_grad()
@@ -80,7 +83,7 @@ def train_model(model,train_loader,validation_loader, validation_dataset, optimi
         cost_list.append(COST)
         dur_list_train.append(time.perf_counter()-t0)
 
-        correct = 0
+        correct = 0.
         #perform a prediction on the validation  data
         for x_test, y_test in validation_loader:
             model.eval()
@@ -130,7 +133,7 @@ def get_model():
                 pos_emb ='learn'
     )
 
-  model.load_state_dict(torch.load("model100epoch_mnist.pth"))
+  #model.load_state_dict(torch.load("model100epoch_mnist.pth"))
 
   return model
 
@@ -146,19 +149,18 @@ if __name__ == "__main__":
     learning_rate = 0.001
     n_epochs = 1
     criterion = nn.CrossEntropyLoss()
+    optimizer = torch.optim.Adam(model.parameters(), lr = learning_rate)
+    train_loader = torch.utils.data.DataLoader(dataset=train_dataset, batch_size=100,shuffle=True)
+    validation_loader = torch.utils.data.DataLoader(dataset=validation_dataset, batch_size=5000, shuffle=True)
 
     with mlflow.start_run(experiment_id=561738204043572503):
         train_dataset, validation_dataset = get_datasets()
         model = get_model()
-
-
-        optimizer = torch.optim.Adam(model.parameters(), lr = learning_rate)
-        train_loader = torch.utils.data.DataLoader(dataset=train_dataset, batch_size=100,shuffle=True)
-        validation_loader = torch.utils.data.DataLoader(dataset=validation_dataset, batch_size=5000, shuffle=True)
-
+        
+        
         cost_list, accuracy_list, dur_list_train, dur_list_val, class_accuracy = train_model(model,train_loader,validation_loader,validation_dataset,optimizer,criterion,n_epochs)
 
-
+		
 
       #  with dagshub_logger() as logger:
       #      logger.log_metrics(loss_tr=cost_list, accuracy_val=accuracy_list, time_tr = dur_list_train, time_val=dur_list_val)
@@ -166,7 +168,9 @@ if __name__ == "__main__":
       #         "learning_rate": learning_rate,
       #         "epochs": n_epochs
       #      })
-
+      
+      
+        
         mlflow.log_params({
             "learning_rate": learning_rate,
             "epochs": n_epochs
@@ -175,7 +179,7 @@ if __name__ == "__main__":
         for i in range(n_epochs):
         	mlflow.log_metrics(
             {
-                "training_loss": cost_list[i],
+                #"training_loss": cost_list[i],
                 "validation_accuracy": accuracy_list[i],
                 "training_time": dur_list_train[i],
                 "validation_time": dur_list_val[i]
