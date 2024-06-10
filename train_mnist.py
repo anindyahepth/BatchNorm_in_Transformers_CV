@@ -143,19 +143,21 @@ def get_model():
 
 if __name__ == "__main__":
 
-    #mlflow.tensorflow.autolog()
+    mlflow.pytorch.autolog()
 
 
     learning_rate = 0.001
     n_epochs = 1
     criterion = nn.CrossEntropyLoss()
-    optimizer = torch.optim.Adam(model.parameters(), lr = learning_rate)
-    train_loader = torch.utils.data.DataLoader(dataset=train_dataset, batch_size=100,shuffle=True)
-    validation_loader = torch.utils.data.DataLoader(dataset=validation_dataset, batch_size=5000, shuffle=True)
+    
 
     with mlflow.start_run(experiment_id=561738204043572503):
         train_dataset, validation_dataset = get_datasets()
         model = get_model()
+        
+        optimizer = torch.optim.Adam(model.parameters(), lr = learning_rate)
+        train_loader = torch.utils.data.DataLoader(dataset=train_dataset, batch_size=100,shuffle=True)
+        validation_loader = torch.utils.data.DataLoader(dataset=validation_dataset, batch_size=5000, shuffle=True)
         
         
         cost_list, accuracy_list, dur_list_train, dur_list_val, class_accuracy = train_model(model,train_loader,validation_loader,validation_dataset,optimizer,criterion,n_epochs)
