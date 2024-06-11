@@ -78,7 +78,7 @@ def train_model(model,train_loader,validation_loader, validation_dataset, optimi
             loss = criterion(z, y)
             loss.backward()
             optimizer.step()
-            COST+=loss.data
+            COST+=loss.data.item()
             #loss_list.append(loss.data)
         cost_list.append(COST)
         dur_list_train.append(time.perf_counter()-t0)
@@ -151,7 +151,7 @@ if __name__ == "__main__":
     criterion = nn.CrossEntropyLoss()
     
 
-    with mlflow.start_run(experiment_id=561738204043572503):
+    with mlflow.start_run(experiment_id=):
         train_dataset, validation_dataset = get_datasets()
         model = get_model()
         
@@ -181,7 +181,7 @@ if __name__ == "__main__":
         for i in range(n_epochs):
         	mlflow.log_metrics(
             {
-                #"training_loss": cost_list[i],
+                "training_loss": cost_list[i],
                 "validation_accuracy": accuracy_list[i],
                 "training_time": dur_list_train[i],
                 "validation_time": dur_list_val[i]
@@ -190,4 +190,4 @@ if __name__ == "__main__":
 
         #print("Saving the model...")
         #model.save("model")
-        print("done.")
+print("done.")
