@@ -19,6 +19,7 @@ import torch.optim as optim
 import torch.nn.init as init
 import time
 import os
+from datetime import datetime
 
 from model.vitbnv1 import ViTBN
 
