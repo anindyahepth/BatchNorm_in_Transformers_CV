@@ -65,12 +65,11 @@ def train_model(model,train_loader,validation_loader, validation_dataset, optimi
     class_accuracy =[[0.for i in range(10)] for j in range(n_epochs)]
     COST=0.
     correct=0.
-    delta_train=0
-    delta_val=0
+    time_train_start=time.perf_counter()
+    time_val_start=time.perf_counter()
 
     for epoch in range(n_epochs):
         COST=0.
-        t0 = datetime.now()
         for x, y in train_loader:
             t0 = time.perf_counter()
             optimizer.zero_grad()
@@ -82,11 +81,9 @@ def train_model(model,train_loader,validation_loader, validation_dataset, optimi
             COST+=loss.data.item()
             #loss_list.append(loss.data)
         cost_list.append(COST)
-        delta_train= datetime.now() - t0
-        dur_list_train.append(delta_train.total_seconds())
+        dur_list_train.append(time.perf_counter()-t0)
 
         correct = 0.
-        t1 = datetime.now()
         #perform a prediction on the validation  data
         for x_test, y_test in validation_loader:
             model.eval()
@@ -112,8 +109,7 @@ def train_model(model,train_loader,validation_loader, validation_dataset, optimi
                 class_accuracy[epoch][i] = 0
         accuracy = correct / N_test
         accuracy_list.append(accuracy)
-        delta_val=datetime.now() - t1
-        dur_list_val.append(delta_val.total_seconds())
+        dur_list_val.append(time.perf_counter()-t1)
 
     return cost_list, accuracy_list, dur_list_train, dur_list_val, class_accuracy
 
