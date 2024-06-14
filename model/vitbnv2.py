@@ -71,8 +71,9 @@ class FeedForward(nn.Module):
     super().__init__()
       
     self.Lin1 = nn.Linear(dim,hidden_dim)
+    self.BN1 = nn.BatchNorm1d(hidden_dim)
     self.act = nn.GELU()
-    self.BN = nn.BatchNorm1d(hidden_dim)
+    self.BN2 = nn.BatchNorm1d(hidden_dim)
     self.drop = nn.Dropout(dropout)
     self.Lin2 = nn.Linear(hidden_dim, dim)
 
@@ -80,9 +81,12 @@ class FeedForward(nn.Module):
   def forward(self, x):
       x = self.Lin1(x)
       x = rearrange(x, 'b n d -> b d n')
-      x = self.BN(x)
+      x = self.BN1(x)
       x = rearrange(x, 'b d n -> b n d')
       x = self.act(x)
+      x = rearrange(x, 'b n d -> b d n')
+      x = self.BN2(x)
+      x = rearrange(x, 'b d n -> b n d')
       x = self.drop(x)
       x = self.Lin2(x)
       return x
