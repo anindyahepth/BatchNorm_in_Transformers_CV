@@ -79,10 +79,10 @@ class FeedForward(nn.Module):
 
   def forward(self, x):
       x = self.Lin1(x)
+      x = self.act(x)
       x = rearrange(x, 'b n d -> b d n')
       x = self.BN(x)
       x = rearrange(x, 'b d n -> b n d')
-      x = self.act(x)
       x = self.drop(x)
       x = self.Lin2(x)
       return x
