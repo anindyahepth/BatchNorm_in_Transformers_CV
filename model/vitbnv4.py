@@ -12,6 +12,21 @@ from einops.layers.torch import Rearrange
 def pair(t):
     return t if isinstance(t, tuple) else (t, t)
 
+# class Batch_Norm
+
+class Batch_Norm(nn.Module):
+  def __init__(self, feature_dim):
+    super().__init__()
+
+    self.BN = nn.BatchNorm1d(feature_dim)
+
+  def forward(self, x):
+    x = rearrange(x, 'b n d -> b d n')
+    x = self.BN(x)
+    x = rearrange(x, 'b d n -> b n d')
+    return x
+
+
 # class PositionalEncoding
 
 def posemb_sincos_1d(h,dim, temperature: int = 10000, dtype = torch.float32):
@@ -41,7 +56,7 @@ class Multihead_Attention(nn.Module):
     self.scale = dim_head ** -0.5
 
 
-    self.norm = nn.LayerNorm(dim)
+    self.norm = nn.Batch_Norm(dim)
     self.atten = nn.Softmax(dim = -1)
     self.dropout = nn.Dropout(dropout)
 
@@ -71,17 +86,15 @@ class FeedForward(nn.Module):
     super().__init__()
       
     self.Lin1 = nn.Linear(dim,hidden_dim)
+    self.norm = nn.Batch_Norm(hidden_dim)
     self.act = nn.GELU()
-    self.BN = nn.BatchNorm1d(hidden_dim)
     self.drop = nn.Dropout(dropout)
     self.Lin2 = nn.Linear(hidden_dim, dim)
 
 
   def forward(self, x):
       x = self.Lin1(x)
-      x = rearrange(x, 'b n d -> b d n')
-      x = self.BN(x)
-      x = rearrange(x, 'b d n -> b n d')
+      x = self.norm(x)
       x = self.act(x)
       x = self.drop(x)
       x = self.Lin2(x)
@@ -93,7 +106,7 @@ class FeedForward(nn.Module):
 class Transformer(nn.Module):
   def __init__(self, dim, depth, heads, dim_head, mlp_dim, dropout = 0.) :
     super().__init__()
-    self.norm = nn.LayerNorm(dim)
+    self.norm = nn.Batch_Norm(dim)
     self.layers = nn.ModuleList([])
     for _ in range(depth):
       self.layers.append(nn.ModuleList([
@@ -131,9 +144,9 @@ class ViTBN(nn.Module):
 
         self.to_patch_embedding = nn.Sequential(
             Rearrange('b c (h p1) (w p2) -> b (h w) (p1 p2 c)', p1 = patch_height, p2 = patch_width),
-            nn.LayerNorm(patch_dim),
+            nn.Batch_Norm(patch_dim),
             nn.Linear(patch_dim, dim),
-            nn.LayerNorm(dim),
+            nn.Batch_Norm(dim),
         )
 
 
