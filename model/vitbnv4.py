@@ -56,7 +56,7 @@ class Multihead_Attention(nn.Module):
     self.scale = dim_head ** -0.5
 
 
-    self.norm = nn.Batch_Norm(dim)
+    self.norm = Batch_Norm(dim)
     self.atten = nn.Softmax(dim = -1)
     self.dropout = nn.Dropout(dropout)
 
@@ -86,7 +86,7 @@ class FeedForward(nn.Module):
     super().__init__()
       
     self.Lin1 = nn.Linear(dim,hidden_dim)
-    self.norm = nn.Batch_Norm(hidden_dim)
+    self.norm = Batch_Norm(hidden_dim)
     self.act = nn.GELU()
     self.drop = nn.Dropout(dropout)
     self.Lin2 = nn.Linear(hidden_dim, dim)
@@ -106,7 +106,7 @@ class FeedForward(nn.Module):
 class Transformer(nn.Module):
   def __init__(self, dim, depth, heads, dim_head, mlp_dim, dropout = 0.) :
     super().__init__()
-    self.norm = nn.Batch_Norm(dim)
+    self.norm = Batch_Norm(dim)
     self.layers = nn.ModuleList([])
     for _ in range(depth):
       self.layers.append(nn.ModuleList([
@@ -144,9 +144,9 @@ class ViTBN(nn.Module):
 
         self.to_patch_embedding = nn.Sequential(
             Rearrange('b c (h p1) (w p2) -> b (h w) (p1 p2 c)', p1 = patch_height, p2 = patch_width),
-            nn.Batch_Norm(patch_dim),
+            Batch_Norm(patch_dim),
             nn.Linear(patch_dim, dim),
-            nn.Batch_Norm(dim),
+            Batch_Norm(dim),
         )
 
 
