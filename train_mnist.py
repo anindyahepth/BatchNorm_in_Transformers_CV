@@ -21,7 +21,7 @@ import time
 import os
 from datetime import datetime
 
-from model.vitbnv1 import ViTBN
+from model.vitbnv1a import ViTBN
 
 import mlflow
 
