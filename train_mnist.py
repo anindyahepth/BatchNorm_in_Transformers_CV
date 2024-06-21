@@ -182,6 +182,8 @@ if __name__ == "__main__":
             "epochs": n_epochs
         })
         
+        mlflow.pytorch.log_model(model,"model_mnist")
+        
         for i in range(n_epochs):
         	mlflow.log_metrics(
             {
@@ -194,8 +196,6 @@ if __name__ == "__main__":
 
         #print("Saving the model...")
         
-      torch.save(model.state_dict(), 'model_mnist.pth')
-
-      mlflow.log_artifact('model_mnist.pth')
+      
 
 print("done.")
