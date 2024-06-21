@@ -20,6 +20,7 @@ import torch.nn.init as init
 import time
 import os
 from datetime import datetime
+from google.colab import files
 
 from model.vitbnv1a import ViTBN
 
@@ -192,5 +193,9 @@ if __name__ == "__main__":
         )
 
         #print("Saving the model...")
-        #model.save("model")
+        
+torch.save(model.state_dict(), 'model_mnist.pth')
+
+mlflow.log_artifact('model_mnist.pth')
+
 print("done.")
