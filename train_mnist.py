@@ -199,6 +199,10 @@ if __name__ == "__main__":
 
         #print("Saving the model...")
         
-      
+#torch.save(model.state_dict(), 'model_mnist.pth')
+
+# download checkpoint file
+
+#files.download('model_mnist.pth')     
 
 print("done.")
