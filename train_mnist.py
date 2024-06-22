@@ -158,6 +158,9 @@ if __name__ == "__main__":
     with mlflow.start_run(experiment_id=):
         train_dataset, validation_dataset = get_datasets()
         model = get_model()
+        #logged_model = 'runs:/6f43f730540040b1a28fbcce66b40dc3/model_mnist'
+        #model = mlflow.pytorch.load_model(logged_model)
+        
         
         optimizer = torch.optim.Adam(model.parameters(), lr = learning_rate)
         train_loader = torch.utils.data.DataLoader(dataset=train_dataset, batch_size=100,shuffle=True)
