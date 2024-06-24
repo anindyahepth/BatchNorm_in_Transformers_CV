@@ -13,7 +13,7 @@ import os
 from datetime import datetime
 from google.colab import files
 
-from model.vitbnv1a import ViTBN
+from model.vitbnv4 import ViTBN
 from emnist_digit_preprocessing import download_emnist
 from emnist_digit_preprocessing import MNISTCustomDataset
 
@@ -30,11 +30,10 @@ def get_datasets() :
     'test_images':'emnist-digits-test-images-idx3-ubyte.gz',
     'test_labels':'emnist-digits-test-labels-idx1-ubyte.gz'
   }
-  dataset= download_emnist(dir_root,file_dict)
-  test_images=dataset[0]
-  test_labels=dataset[1]
-
+  dataset = download_emnist(dir_root,file_dict)
+  return dataset
   
+def get_infdata(images, labels) : 
   data_transform = transforms.Compose([
     transforms.ToPILImage(),
     lambda img: torchvision.transforms.functional.rotate(img, -90),
@@ -44,11 +43,9 @@ def get_datasets() :
     ]
 )
 
-#inference_dataset
+  inference_dataset = MNISTCustomDataset(images, labels, transform=data_transform, label_type='integer')
 
-inference_dataset = MNISTCustomDataset(test_images, test_labels, transform=data_transform, label_type='integer')
-
-return inference_dataset
+  return inference_dataset
 
 
 
@@ -113,10 +110,10 @@ def get_model():
                 pool = 'cls',
                 dropout = 0.0,
                 emb_dropout = 0.0,
-                pos_emb ='learn'
+                pos_emb = 'learn'
     )
 
-  model.load_state_dict(torch.load("model100epoch_mnist.pth"))
+  model.load_state_dict(torch.load("ViTBN_30_mnist.pth"))
 
   return model
 
@@ -130,8 +127,11 @@ if __name__ == "__main__":
     batch_size = 100
     
 
-    with mlflow.start_run(experiment_id=):
-        inference_dataset = get_datasets()
+    with mlflow.start_run(experiment_id=17):
+        dataset = get_datasets()
+        test_images = dataset[0]
+        test_labels = dataset[1]
+        inference_dataset = get_infdata(test_images, test_labels)
         model = get_model()
         #logged_model = 'runs:/6f43f730540040b1a28fbcce66b40dc3/model_mnist'
         #model = mlflow.pytorch.load_model(logged_model)
@@ -141,14 +141,14 @@ if __name__ == "__main__":
         
         accuracy_list, dur_list_val, class_accuracy = eval_model(model, inference_dataset, inference_loader,n_epochs)
 
-      mlflow.log_params({
-            "epochs": n_epochs
-            "batch size": batch_size
+        mlflow.log_params({
+            "epochs": n_epochs,
+            "batch_size": batch_size
         })
         
       
         
-       for i in range(n_epochs):
+        for i in range(n_epochs):
         	mlflow.log_metrics(
             {
                 "inference_accuracy": accuracy_list[i],
