@@ -55,7 +55,7 @@ def download_emnist(dir_root,file_dict=None):
                         mnist_data.append(np.frombuffer(f_in.read(), np.uint8, offset=16).reshape(-1,28, 28)) #if images
                     else:
                         mnist_data.append(np.frombuffer(f_in.read(), np.uint8, offset=8))  #if labels
-            #return mnist_data in a list format ==> [[train_images], [train_labels], [test_images], [test_labels]]
+            #return mnist_data in a list format ==> [[test_images], [test_labels]]
             return mnist_data
         except Exception as e:
             print("Something went wrong:", e)
