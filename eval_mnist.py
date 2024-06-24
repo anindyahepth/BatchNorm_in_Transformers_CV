@@ -27,14 +27,12 @@ mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI"))
 def get_datasets() :
   dir_root = '/content/'
   file_dict={
-    'train_images':'emnist-digits-train-images-idx3-ubyte.gz',
-    'train_labels':'emnist-digits-train-labels-idx1-ubyte.gz',
     'test_images':'emnist-digits-test-images-idx3-ubyte.gz',
     'test_labels':'emnist-digits-test-labels-idx1-ubyte.gz'
   }
   dataset= download_emnist(dir_root,file_dict)
-  test_images=dataset[2]
-  test_labels=dataset[3]
+  test_images=dataset[0]
+  test_labels=dataset[1]
 
   
   data_transform = transforms.Compose([
@@ -144,8 +142,8 @@ if __name__ == "__main__":
         accuracy_list, dur_list_val, class_accuracy = eval_model(model, inference_dataset, inference_loader,n_epochs)
 
       mlflow.log_params({
-            "learning_rate": learning_rate,
             "epochs": n_epochs
+            "batch size": batch_size
         })
         
       
