@@ -153,6 +153,9 @@ def train_evaluate(train_dataset, valiadation_dataset, parameterization):
 
 # Now Optimize - this is where the ax service enters
 
+
+if __name__ == "__main__":
+
 best_parameters, values, experiment, model = optimize(
     parameters=[
         {"name": "lr", "type": "range", "bounds": [1e-6, 0.4], "log_scale": True},
