@@ -140,7 +140,7 @@ def train_evaluate(train_dataset, valiadation_dataset, parameterization):
 
   # Get the untrained model
 
-  model = get_model()
+  model = get_model(parameterization)
 
   # Get the trained model
 
