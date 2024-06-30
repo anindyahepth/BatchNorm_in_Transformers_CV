@@ -33,9 +33,9 @@ from model.vitbnv1a import ViTBN
 
 def get_datasets() :
   data_transform = transforms.Compose([
-    transforms.RandomRotation(20),
-    transforms.RandomAffine(degrees = 0, translate = (0.2, 0.2)),
-    transforms_v2.RandomZoomOut(0,(2.0, 2.0), p=0.2),
+    #transforms.RandomRotation(20),
+    #transforms.RandomAffine(degrees = 0, translate = (0.2, 0.2)),
+    #transforms_v2.RandomZoomOut(0,(2.0, 2.0), p=0.2),
     transforms.Resize(28),
     transforms.ToTensor()
     ])
@@ -158,7 +158,7 @@ if __name__ == "__main__":
 
 best_parameters, values, experiment, model = optimize(
     parameters=[
-        {"name": "lr", "type": "range", "bounds": [1e-6, 0.4], "log_scale": True},
+        {"name": "lr", "type": "range", "bounds": [1e-6, 1e-3], "log_scale": True},
         {"name": "batchsize", "type": "range", "bounds": [20, 120]},
         #{"name": "momentum", "type": "range", "bounds": [0.0, 1.0]},
         #{"name": "max_epoch", "type": "range", "bounds": [1, 30]},
