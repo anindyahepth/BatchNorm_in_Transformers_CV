@@ -110,20 +110,22 @@ def train_model(model, train_loader, parameters):
 
 # Accuracy function
 
-def eval_acc(model, data_loader):
-    N_test = len(data_loader)
+def eval_acc(model, data_loader, validation_dataset):
+    N_test = len(validation_dataset)
+    correct = 0
+    accuracy = 0
     for x_test,y_test in data_loader:
         model.eval()
         z = model(x_test)
         _, yhat = torch.max(z, 1)
         correct += (yhat == y_test).sum().item()
     accuracy = correct / N_test
-    return accuarcy
+    return accuracy
 
 
 # A Train_Evaluate Function that the Bayesian Opt calls on every run
 
-def train_evaluate(train_dataset, valiadation_dataset, parameterization):
+def train_evaluate(parameterization):
 
   # train_loader
 
@@ -148,7 +150,7 @@ def train_evaluate(train_dataset, valiadation_dataset, parameterization):
 
   # return the accuracy of the model
 
-  return eval_acc(model = trained_model, data_loader=validation_loader)
+  return eval_acc(model = trained_model, data_loader=validation_loader, validation_dataset)
 
 
 # Now Optimize - this is where the ax service enters
@@ -156,9 +158,11 @@ def train_evaluate(train_dataset, valiadation_dataset, parameterization):
 
 if __name__ == "__main__":
 
+    train_dataset, validation_dataset = get_datasets()
+    
 best_parameters, values, experiment, model = optimize(
     parameters=[
-        {"name": "lr", "type": "range", "bounds": [1e-6, 1e-3], "log_scale": True},
+        {"name": "lr", "type": "range", "bounds": [5e-4, 1e-2], "log_scale": True},
         {"name": "batchsize", "type": "range", "bounds": [20, 120]},
         #{"name": "momentum", "type": "range", "bounds": [0.0, 1.0]},
         #{"name": "max_epoch", "type": "range", "bounds": [1, 30]},
