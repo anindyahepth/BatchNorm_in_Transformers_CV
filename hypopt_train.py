@@ -129,14 +129,14 @@ def train_evaluate(parameterization):
 
   # train_loader
 
-  train_loader = torch.utils.data.DataLoader(train_datasetset,
+  train_loader = torch.utils.data.DataLoader(train_dataset,
                                 batch_size=parameterization.get("batchsize", 100),
                                 shuffle=True,
                                 num_workers=0,
                                 pin_memory=True)
 
   validation_loader = torch.utils.data.DataLoader(validation_dataset,
-                                                  batch_size= 500,
+                                                  batch_size= 5000,
                                                   shuffle=True)
 
 
@@ -150,7 +150,7 @@ def train_evaluate(parameterization):
 
   # return the accuracy of the model
 
-  return eval_acc(model = trained_model, data_loader=validation_loader, validation_dataset)
+  return eval_acc(model = trained_model, data_loader=validation_loader, validation_dataset = validation_dataset)
 
 
 # Now Optimize - this is where the ax service enters
@@ -162,7 +162,7 @@ if __name__ == "__main__":
     
 best_parameters, values, experiment, model = optimize(
     parameters=[
-        {"name": "lr", "type": "range", "bounds": [5e-4, 1e-2], "log_scale": True},
+        {"name": "lr", "type": "range", "bounds": [1e-5, 1e-2], "log_scale": True},
         {"name": "batchsize", "type": "range", "bounds": [20, 120]},
         #{"name": "momentum", "type": "range", "bounds": [0.0, 1.0]},
         #{"name": "max_epoch", "type": "range", "bounds": [1, 30]},
@@ -177,5 +177,15 @@ means, covariances = values
 print(means)
 print(covariances)
 
+best_objectives = np.array([[trial.objective_mean*100 for trial in experiment.trials.values()]])
+
+best_objective_plot = optimization_trace_single_method(
+    y=np.maximum.accumulate(best_objectives, axis=1),
+    title="Model performance vs. # of iterations",
+    ylabel="Classification Accuracy, %",
+)
+render(best_objective_plot)
+
+render(plot_contour(model=model, param_x='batchsize', param_y='lr', metric_name='accuracy'))
 
 
