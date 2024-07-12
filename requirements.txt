@@ -3,3 +3,4 @@ torchvision
 mlflow
 einops
 flask
+ax-platform
