@@ -12,7 +12,7 @@ import numpy as np
 import torch
 import torchvision
 import torchvision.transforms as transforms
-from torchvision import transforms as transforms_v2
+import torchvision.transforms.v2 as transforms_v2
 import torch.optim as optim
 import torch.nn as nn
 import torch.nn.functional as F
