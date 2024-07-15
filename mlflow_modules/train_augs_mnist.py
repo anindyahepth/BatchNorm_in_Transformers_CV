@@ -40,8 +40,8 @@ mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI"))
 def get_datasets_emnist() :
   dir_root = '/content/'
   file_dict={
-    'train_images':'emnist-letters-train-images-idx3-ubyte.gz',
-    'train_labels':'emnist-letters-train-labels-idx1-ubyte.gz',
+    'train_images':'emnist-digits-train-images-idx3-ubyte.gz',
+    'train_labels':'emnist-digits-train-labels-idx1-ubyte.gz',
     'test_images':'emnist-digits-test-images-idx3-ubyte.gz',
     'test_labels':'emnist-digits-test-labels-idx1-ubyte.gz'
   }
