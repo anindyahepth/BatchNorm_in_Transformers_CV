@@ -23,7 +23,9 @@ import os
 from datetime import datetime
 from google.colab import files
 
-from model.vitbnv1a import ViTBN
+from model.vitbnv4 import ViTBN
+from emnist_preprocessing_final import download_emnist
+from emnist_preprocessing_final import MNISTCustomDataset
 
 import mlflow
 
@@ -35,10 +37,44 @@ mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI"))
 #os.environ['MLFLOW_TRACKING_USERNAME'] = USER_NAME
 #os.environ['MLFLOW_TRACKING_PASSWORD'] = PASSWORD
 
+def get_datasets_emnist() :
+  dir_root = '/content/'
+  file_dict={
+    'train_images':'emnist-letters-train-images-idx3-ubyte.gz',
+    'train_labels':'emnist-letters-train-labels-idx1-ubyte.gz',
+    'test_images':'emnist-digits-test-images-idx3-ubyte.gz',
+    'test_labels':'emnist-digits-test-labels-idx1-ubyte.gz'
+  }
+  dataset = download_emnist(dir_root,file_dict)
+
+  train_images=dataset[0]
+  train_labels=dataset[1]
+  test_images=dataset[2]
+  test_labels=dataset[3]
+
+  data_transform = transforms.Compose([
+    transforms.ToPILImage(),
+    lambda img: torchvision.transforms.functional.rotate(img, -90),
+    lambda img: torchvision.transforms.functional.hflip(img),
+    transforms.RandomAffine(degrees = 0, translate = (0.2, 0.2)),
+    transforms_v2.RandomZoomOut(0,(2.0, 2.0), p=0.2),
+    transforms.Resize(28),
+    transforms.ToTensor()
+    ]
+)
+
+#training_dataset
+
+  train_dataset = MNISTCustomDataset(train_images, train_labels, transform=data_transform, label_type='integer')
+
+#validation_dataset
+
+  validation_dataset = MNISTCustomDataset(test_images, test_labels, transform=data_transform, label_type='integer')
+
+  return train_dataset, validation_dataset
 
 
-
-def get_datasets() :
+def get_datasets_mnist() :
   data_transform = transforms.Compose([
     transforms.RandomRotation(20),
     transforms.RandomAffine(degrees = 0, translate = (0.3, 0.3)),
@@ -141,7 +177,7 @@ def get_model():
                 pos_emb ='learn'
     )
 
-  #model.load_state_dict(torch.load("model100epoch_mnist.pth"))
+  model.load_state_dict(torch.load("ViTBN_aug_50_fin.pth"))
 
   return model
 
@@ -156,18 +192,19 @@ if __name__ == "__main__":
 
     learning_rate = 0.001
     n_epochs = 1
+    batch_size = 100
     criterion = nn.CrossEntropyLoss()
     
 
     with mlflow.start_run(experiment_id=):
-        train_dataset, validation_dataset = get_datasets()
+        train_dataset, validation_dataset = get_datasets_emnist()
         model = get_model()
         #logged_model = 'runs:/6f43f730540040b1a28fbcce66b40dc3/model_mnist'
         #model = mlflow.pytorch.load_model(logged_model)
         
         
         optimizer = torch.optim.Adam(model.parameters(), lr = learning_rate)
-        train_loader = torch.utils.data.DataLoader(dataset=train_dataset, batch_size=100,shuffle=True)
+        train_loader = torch.utils.data.DataLoader(dataset=train_dataset, batch_size=batch_size,shuffle=True)
         validation_loader = torch.utils.data.DataLoader(dataset=validation_dataset, batch_size=5000, shuffle=True)
         
         
@@ -186,6 +223,7 @@ if __name__ == "__main__":
         
         mlflow.log_params({
             "learning_rate": learning_rate,
+	    "batch_size" : batch_size,
             "epochs": n_epochs
         })
         
@@ -203,10 +241,10 @@ if __name__ == "__main__":
 
         #print("Saving the model...")
         
-#torch.save(model.state_dict(), 'model_mnist.pth')
+torch.save(model.state_dict(), 'ViTBN_fin.pth')
 
 # download checkpoint file
 
-#files.download('model_mnist.pth')     
+files.download('ViTBN_fin.pth')     
 
 print("done.")
