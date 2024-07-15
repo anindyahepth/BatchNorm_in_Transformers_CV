@@ -31,7 +31,44 @@ from model.vitbnv1a import ViTBN
 
 # GET THE DATASETS
 
-def get_datasets() :
+def get_datasets_emnist() :
+  dir_root = '/content/'
+  file_dict={
+    'train_images':'emnist-letters-train-images-idx3-ubyte.gz',
+    'train_labels':'emnist-letters-train-labels-idx1-ubyte.gz',
+    'test_images':'emnist-digits-test-images-idx3-ubyte.gz',
+    'test_labels':'emnist-digits-test-labels-idx1-ubyte.gz'
+  }
+  dataset = download_emnist(dir_root,file_dict)
+
+  train_images=dataset[0]
+  train_labels=dataset[1]
+  test_images=dataset[2]
+  test_labels=dataset[3]
+
+  data_transform = transforms.Compose([
+    transforms.ToPILImage(),
+    lambda img: torchvision.transforms.functional.rotate(img, -90),
+    lambda img: torchvision.transforms.functional.hflip(img),
+    transforms.RandomAffine(degrees = 0, translate = (0.2, 0.2)),
+    transforms_v2.RandomZoomOut(0,(2.0, 2.0), p=0.2),
+    transforms.Resize(28),
+    transforms.ToTensor()
+    ]
+)
+
+#training_dataset
+
+  train_dataset = MNISTCustomDataset(train_images, train_labels, transform=data_transform, label_type='integer')
+
+#validation_dataset
+
+  validation_dataset = MNISTCustomDataset(test_images, test_labels, transform=data_transform, label_type='integer')
+
+  return train_dataset, validation_dataset
+
+
+def get_datasets_mnist() :
   data_transform = transforms.Compose([
     #transforms.RandomRotation(20),
     #transforms.RandomAffine(degrees = 0, translate = (0.2, 0.2)),
@@ -51,12 +88,12 @@ def get_datasets() :
 
 # GET THE DATALOADERS
 
-def get_dataloader(train_dataset, validation_dataset, batch_size):
+# def get_dataloader(train_dataset, validation_dataset, batch_size):
 
-  train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
-  validation_loader = torch.utils.data.DataLoader(validation_dataset, batch_size=batch_size, shuffle=True)
+#   train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+#   validation_loader = torch.utils.data.DataLoader(validation_dataset, batch_size=batch_size, shuffle=True)
 
-  return train_loader, validation_loader
+#   return train_loader, validation_loader
 
 
 # DEFINE THE MODEL
@@ -158,11 +195,11 @@ def train_evaluate(parameterization):
 
 if __name__ == "__main__":
 
-    train_dataset, validation_dataset = get_datasets()
+    train_dataset, validation_dataset = get_datasets_emnist()
     
 best_parameters, values, experiment, model = optimize(
     parameters=[
-        {"name": "lr", "type": "range", "bounds": [1e-5, 1e-2], "log_scale": True},
+        {"name": "lr", "type": "range", "bounds": [1e-5, 1e-3], "log_scale": True},
         {"name": "batchsize", "type": "range", "bounds": [20, 120]},
         #{"name": "momentum", "type": "range", "bounds": [0.0, 1.0]},
         #{"name": "max_epoch", "type": "range", "bounds": [1, 30]},
