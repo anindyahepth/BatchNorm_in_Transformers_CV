@@ -24,8 +24,8 @@ from datetime import datetime
 from google.colab import files
 
 from model.vitbnv4 import ViTBN
-from emnist_preprocessing_final import download_emnist
-from emnist_preprocessing_final import MNISTCustomDataset
+from emnist_digit_preprocessing import download_emnist
+from emnist_digit_preprocessing import MNISTCustomDataset
 
 import mlflow
 
