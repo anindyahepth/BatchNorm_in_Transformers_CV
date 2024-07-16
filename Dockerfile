@@ -9,10 +9,10 @@ RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Let' only copy the required files and folders
-ADD ./model
-COPY ./app.py ./
-ADD ./templates
-ADD ./static
+ADD ./model ./model
+COPY ./app.py ./app.py
+ADD ./templates ./templates
+ADD ./static ./static
 
 EXPOSE 5000
 
