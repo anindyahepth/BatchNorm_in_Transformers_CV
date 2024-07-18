@@ -93,12 +93,15 @@ def get_datasets_mnist() :
   return train_dataset, validation_dataset
 
 
-def train_model(model,train_loader,validation_loader, validation_dataset, optimizer,criterion,n_epochs):
+def train_model(model,train_loader,validation_loader, train_dataset, validation_dataset, optimizer,criterion,n_epochs):
 
     #global variable
-    N_test=len(validation_dataset)
+    N_test=len(validation_dataset)	
+    N_train=len(train_dataset)
+    accuracy_train_list=[]
     accuracy_list=[]
     cost_list=[]
+    cost_test_list=[]
     loss_list=[]
     dur_list_train=[]
     dur_list_val = []
@@ -106,12 +109,15 @@ def train_model(model,train_loader,validation_loader, validation_dataset, optimi
     class_total= [[0.for i in range (10)] for j in range(n_epochs)]
     class_accuracy =[[0.for i in range(10)] for j in range(n_epochs)]
     COST=0.
+    COST_test=0.
+    correct_train=0.
     correct=0.
     delta_train=0
     delta_val=0
 
     for epoch in range(n_epochs):
         COST=0.
+	correct_train=0
         t0 = datetime.now()
         for x, y in train_loader:
             optimizer.zero_grad()
@@ -121,12 +127,16 @@ def train_model(model,train_loader,validation_loader, validation_dataset, optimi
             loss.backward()
             optimizer.step()
             COST+=loss.data.item()
+	    _, yhat = torch.max(z, 1)
+            correct_train += (yhat == y).sum().item()
             #loss_list.append(loss.data)
         cost_list.append(COST)
+	accuracy_train_list= correct_train/N_train
         delta_train= datetime.now() - t0
         dur_list_train.append(delta_train.total_seconds())
 
         correct = 0.
+	COST_test=0.
         t1 = datetime.now()
         #perform a prediction on the validation  data
         for x_test, y_test in validation_loader:
@@ -134,7 +144,10 @@ def train_model(model,train_loader,validation_loader, validation_dataset, optimi
             z = model(x_test)
             _, yhat = torch.max(z, 1)
             correct += (yhat == y_test).sum().item()
-
+	    loss = criterion(z, y_test)
+	    COST_test +=loss.data.item() 
+		
+		
             b = y_test.shape[0]
 
             for i in range(b):
@@ -154,8 +167,9 @@ def train_model(model,train_loader,validation_loader, validation_dataset, optimi
         accuracy_list.append(accuracy)
         delta_val=datetime.now() - t1
         dur_list_val.append(delta_val.total_seconds())
+	cost_test_list.append(COST_test)
 
-    return cost_list, accuracy_list, dur_list_train, dur_list_val, class_accuracy
+    return cost_list, accuracy_list, dur_list_train, dur_list_val, class_accuracy, accuracy_train_list, cost_test_list
 
 
 
@@ -208,7 +222,7 @@ if __name__ == "__main__":
         validation_loader = torch.utils.data.DataLoader(dataset=validation_dataset, batch_size=5000, shuffle=True)
         
         
-        cost_list, accuracy_list, dur_list_train, dur_list_val, class_accuracy = train_model(model,train_loader,validation_loader,validation_dataset,optimizer,criterion,n_epochs)
+        cost_list, accuracy_list, dur_list_train, dur_list_val, class_accuracy, accuracy_train_list, cost_test_list = train_model(model,train_loader,validation_loader, train_dataset, validation_dataset,optimizer,criterion,n_epochs)
 
 		
 
@@ -235,16 +249,18 @@ if __name__ == "__main__":
                 "training_loss": cost_list[i],
                 "validation_accuracy": accuracy_list[i],
                 "training_time": dur_list_train[i],
-                "validation_time": dur_list_val[i]
+                "validation_time": dur_list_val[i],
+		"training_accuracy":accuracy_train_list[i],
+		"test_loss": cost_test_list[i]
             },step = i+1
         )
 
         #print("Saving the model...")
         
-torch.save(model.state_dict(), 'ViTBN_fin.pth')
+torch.save(model.state_dict(), 'model.pth')
 
 # download checkpoint file
 
-files.download('ViTBN_fin.pth')     
+files.download('model.pth')     
 
 print("done.")
