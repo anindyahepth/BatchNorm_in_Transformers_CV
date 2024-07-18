@@ -23,7 +23,7 @@ import os
 from datetime import datetime
 from google.colab import files
 
-from model.vitbnv4 import ViTBN
+from model.vitbnv1a import ViTBN
 from emnist_digit_preprocessing import download_emnist
 from emnist_digit_preprocessing import MNISTCustomDataset
 
@@ -77,8 +77,8 @@ def get_datasets_emnist() :
 def get_datasets_mnist() :
   data_transform = transforms.Compose([
     transforms.RandomRotation(20),
-    transforms.RandomAffine(degrees = 0, translate = (0.3, 0.3)),
-    transforms_v2.RandomZoomOut(0,(2.0, 2.0), p=0.4),
+    transforms.RandomAffine(degrees = 0, translate = (0.2, 0.2)),
+    transforms_v2.RandomZoomOut(0,(2.0, 2.0), p=0.2),
     transforms.Resize(28),
     transforms.ToTensor()
     ])
@@ -117,7 +117,7 @@ def train_model(model,train_loader,validation_loader, train_dataset, validation_
 
     for epoch in range(n_epochs):
         COST=0.
-	correct_train=0
+        correct_train=0
         t0 = datetime.now()
         for x, y in train_loader:
             optimizer.zero_grad()
@@ -127,16 +127,17 @@ def train_model(model,train_loader,validation_loader, train_dataset, validation_
             loss.backward()
             optimizer.step()
             COST+=loss.data.item()
-	    _, yhat = torch.max(z, 1)
+            _, yhat = torch.max(z, 1)
             correct_train += (yhat == y).sum().item()
             #loss_list.append(loss.data)
         cost_list.append(COST)
-	accuracy_train_list= correct_train/N_train
+        accuracy_train= correct_train/N_train
+        accuracy_train_list.append(accuracy_train)
         delta_train= datetime.now() - t0
         dur_list_train.append(delta_train.total_seconds())
 
         correct = 0.
-	COST_test=0.
+        COST_test=0.
         t1 = datetime.now()
         #perform a prediction on the validation  data
         for x_test, y_test in validation_loader:
@@ -144,8 +145,8 @@ def train_model(model,train_loader,validation_loader, train_dataset, validation_
             z = model(x_test)
             _, yhat = torch.max(z, 1)
             correct += (yhat == y_test).sum().item()
-	    loss = criterion(z, y_test)
-	    COST_test +=loss.data.item() 
+            loss = criterion(z, y_test)
+            COST_test +=loss.data.item() 
 		
 		
             b = y_test.shape[0]
@@ -167,7 +168,7 @@ def train_model(model,train_loader,validation_loader, train_dataset, validation_
         accuracy_list.append(accuracy)
         delta_val=datetime.now() - t1
         dur_list_val.append(delta_val.total_seconds())
-	cost_test_list.append(COST_test)
+        cost_test_list.append(COST_test)
 
     return cost_list, accuracy_list, dur_list_train, dur_list_val, class_accuracy, accuracy_train_list, cost_test_list
 
@@ -191,7 +192,7 @@ def get_model():
                 pos_emb ='learn'
     )
 
-  model.load_state_dict(torch.load("ViTBN_aug_50_fin.pth"))
+  model.load_state_dict(torch.load("model_pth_dir/ViTBNFFN_opt_aug_130.pth"))
 
   return model
 
@@ -204,14 +205,14 @@ if __name__ == "__main__":
     mlflow.pytorch.autolog()
 
 
-    learning_rate = 0.001
-    n_epochs = 1
-    batch_size = 100
+    learning_rate = 0.0014
+    n_epochs = 10
+    batch_size = 53
     criterion = nn.CrossEntropyLoss()
     
 
-    with mlflow.start_run(experiment_id=):
-        train_dataset, validation_dataset = get_datasets_emnist()
+    with mlflow.start_run(experiment_id=45):
+        train_dataset, validation_dataset = get_datasets_mnist()
         model = get_model()
         #logged_model = 'runs:/6f43f730540040b1a28fbcce66b40dc3/model_mnist'
         #model = mlflow.pytorch.load_model(logged_model)
@@ -237,7 +238,7 @@ if __name__ == "__main__":
         
         mlflow.log_params({
             "learning_rate": learning_rate,
-	    "batch_size" : batch_size,
+	          "batch_size" : batch_size,
             "epochs": n_epochs
         })
         
@@ -250,17 +251,17 @@ if __name__ == "__main__":
                 "validation_accuracy": accuracy_list[i],
                 "training_time": dur_list_train[i],
                 "validation_time": dur_list_val[i],
-		"training_accuracy":accuracy_train_list[i],
-		"test_loss": cost_test_list[i]
+                "training_accuracy": accuracy_train_list[i],
+	        "test_loss": cost_test_list[i]
             },step = i+1
         )
 
         #print("Saving the model...")
         
-torch.save(model.state_dict(), 'model.pth')
+#torch.save(model.state_dict(), 'model.pth')
 
 # download checkpoint file
 
-files.download('model.pth')     
+#files.download('model.pth')     
 
 print("done.")
