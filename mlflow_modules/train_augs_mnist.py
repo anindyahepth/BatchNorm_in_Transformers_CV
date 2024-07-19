@@ -153,7 +153,7 @@ def train_model(model,train_loader,validation_loader, train_dataset, validation_
         delta_val=datetime.now() - t1
         dur_list_val.append(delta_val.total_seconds())
 
-    return cost_list, accuracy_list, dur_list_train, dur_list_val, class_accuracy, accuracy_train_list, cost_test_list
+    return cost_list, accuracy_list, dur_list_train, dur_list_val, accuracy_train_list, cost_test_list
 
 
 
@@ -206,7 +206,7 @@ if __name__ == "__main__":
         validation_loader = torch.utils.data.DataLoader(dataset=validation_dataset, batch_size=5000, shuffle=True)
         
         
-        cost_list, accuracy_list, dur_list_train, dur_list_val, class_accuracy, accuracy_train_list, cost_test_list = train_model(model,train_loader,validation_loader, train_dataset, validation_dataset,optimizer,criterion,n_epochs)
+        cost_list, accuracy_list, dur_list_train, dur_list_val, accuracy_train_list, cost_test_list = train_model(model,train_loader,validation_loader, train_dataset, validation_dataset,optimizer,criterion,n_epochs)
 
 		
 
@@ -221,7 +221,7 @@ if __name__ == "__main__":
         
         mlflow.log_params({
             "learning_rate": learning_rate,
-	          "batch_size" : batch_size,
+	    "batch_size" : batch_size,
             "epochs": n_epochs
         })
         
