@@ -145,30 +145,13 @@ def train_model(model,train_loader,validation_loader, train_dataset, validation_
             z = model(x_test)
             _, yhat = torch.max(z, 1)
             correct += (yhat == y_test).sum().item()
-            loss = criterion(z, y_test)
-            COST_test +=loss.data.item() 
-		
-		
-            b = y_test.shape[0]
-
-            for i in range(b):
-                if yhat[i] == y_test[i] :
-                  class_correct[epoch][y_test[i].item()] += 1
-                  class_total[epoch][y_test[i].item()] += 1
-                else:
-                  class_correct[epoch][y_test[i].item()] += 0
-                  class_total[epoch][y_test[i].item()] += 1
-
-        for i in range(10):
-             if class_total[epoch][i] > 0:
-                class_accuracy[epoch][i] = 100 * class_correct[epoch][i] / class_total[epoch][i]
-             else:
-                class_accuracy[epoch][i] = 0
+            loss_test = criterion(z, y_test)
+            COST_test +=loss_test.data.item() 
+	cost_test_list.append(COST_test)
         accuracy = correct / N_test
         accuracy_list.append(accuracy)
         delta_val=datetime.now() - t1
         dur_list_val.append(delta_val.total_seconds())
-        cost_test_list.append(COST_test)
 
     return cost_list, accuracy_list, dur_list_train, dur_list_val, class_accuracy, accuracy_train_list, cost_test_list
 
