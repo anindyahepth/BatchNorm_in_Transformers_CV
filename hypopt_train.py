@@ -197,7 +197,7 @@ def train_evaluate(parameterization):
 
 if __name__ == "__main__":
 
-    train_dataset, validation_dataset = get_datasets_emnist()
+    train_dataset, validation_dataset = get_datasets_mnist()
     
 best_parameters, values, experiment, model = optimize(
     parameters=[
