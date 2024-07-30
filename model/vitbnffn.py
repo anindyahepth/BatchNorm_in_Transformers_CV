@@ -109,9 +109,9 @@ class Transformer(nn.Module):
       return self.norm(x)
 
 
-# class ViTBN
+# class ViTBNFFN
 
-class ViTBN(nn.Module):
+class ViTBNFFN(nn.Module):
   def __init__(self, *, image_size, patch_size, num_classes, dim, depth,
                heads, mlp_dim, pool, channels = 3, dim_head = 64,
                dropout = 0., emb_dropout = 0.,pos_emb):
