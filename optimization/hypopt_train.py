@@ -26,7 +26,7 @@ from ax.utils.tutorials.cnn_utils import train, evaluate
 
 from google.colab import files
 
-from model.vitbnv4 import ViTBN
+from model.vitbn import ViTBN
 from emnist_digit_preprocessing import download_emnist
 from emnist_digit_preprocessing import MNISTCustomDataset
 
