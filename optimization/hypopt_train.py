@@ -72,11 +72,11 @@ def get_datasets_emnist() :
 
 def get_datasets_mnist() :
   data_transform = transforms.Compose([
-    #transforms.RandomRotation(20),
-    #transforms.RandomAffine(degrees = 0, translate = (0.2, 0.2)),
-    #transforms_v2.RandomZoomOut(0,(2.0, 2.0), p=0.2),
-    transforms.Resize(28),
-    transforms.ToTensor()
+     transforms.RandomRotation(60),
+     transforms.RandomAffine(degrees = 0, translate = (0.3, 0.3)),
+     transforms_v2.RandomZoomOut(0,(1.0, 4.0), p=0.5),
+     #transforms.Resize(28),
+     transforms.ToTensor()
     ])
 
   #Load training data
@@ -131,6 +131,11 @@ def train_model(model, train_loader, parameters):
   optimizer = optim.Adam(model.parameters(),
                         lr=parameters.get("lr", 0.001), # 0.001 is default
   )
+  scheduler = optim.lr_scheduler.StepLR(
+      optimizer,
+      step_size=int(parameters.get("step_size", 30)),
+      gamma=parameters.get("gamma", 1.0),  # default is no learning rate decay
+  )
   n_epochs = parameters.get("n_epochs", 3)
 
   #training block
@@ -143,6 +148,7 @@ def train_model(model, train_loader, parameters):
             loss = criterion(z, y)
             loss.backward()
             optimizer.step()
+            scheduler.step()
 
   return model
 
