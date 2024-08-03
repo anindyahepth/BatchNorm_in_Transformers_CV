@@ -234,6 +234,6 @@ best_objective_plot = optimization_trace_single_method(
 )
 render(best_objective_plot)
 
-render(plot_contour(model=model, param_x='batchsize', param_y='lr', metric_name='accuracy'))
+#render(plot_contour(model=model, param_x='batchsize', param_y='lr', metric_name='accuracy'))
 
 
