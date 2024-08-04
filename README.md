@@ -4,24 +4,14 @@ substantially speed up the learning process in CNNs. We investigate the impact o
 in the most basic Transformer-based model for image classification - the Vision Transformer (ViT). 
 We consider two distinct models:
 
-1. **ViTBNFFN** : This implement a batchnorm layer in the Feed Forward Netweork (FFN) component of the standard ViT. The batchnorm layer acts before the nonlinear activation function.
+1. **ViTBNFFN** : This implement a batchnorm layer in the Feed Forward Netweork (FFN) component of the standard ViT.
 2. **ViTBN** : This replaces all LayerNorms with BatchNorms.
 
-As a first step, we implement a batchnorm layer 
-in the Feed Forward Netweork (FFN) component of the standard Vision Transformer (ViT). 
-The batchnorm layer acts before the nonlinear activation function. We call this a 
-**ViTBN** (Vision Transformer with BatchNorm) model.
 
-Training on the FashionMNIST(FMNIST) and MNIST datasets from scratch, we see that ViTBN 
-is about 3-6 times faster compared to the standard ViT per epoch both during training phase
-and about 5 times faster during the testing phase. In addition, the former reaches the 
-highest accuracy after training for a far fewer number of epochs. The relevant graphs are 
-attached and explained below. 
-
-The model can be loaded and used as follows. 
+The model ViTBN (and analogously ViTBNFFN) can be used in the following fashion:
 
 ```
-from model.vitbnv1 import ViTBN
+from model.vitbn import ViTBN
 
 model = ViTBN(
                 image_size = 28,
@@ -40,8 +30,15 @@ model = ViTBN(
     )
 ```
 One can choose either cls tokens or a global pooling to implement the final classification using the MLP head, indicated 
-by setting `pool' to 'cls' or 'mean' respectively. One can also choose a learnable positional encoding vector or a 1d 
+by setting the hyperparameter `pool' to 'cls' or 'mean' respectively. One can also choose a learnable positional encoding vector or a 1d 
 sinusoidal vector, indicated by setting 'pos_emb ' to 'learn' or 'pe1d' respectively.
+
+Training on the FashionMNIST(FMNIST) and MNIST datasets from scratch, we see that ViTBN 
+is about 3-6 times faster compared to the standard ViT per epoch both during training phase
+and about 5 times faster during the testing phase. In addition, the former reaches the 
+highest accuracy after training for a far fewer number of epochs. The relevant graphs are 
+attached and explained below. 
+
 
 For the ViT/ViTBN comparison using the FMNIST dataset, we use the following set of parameters for the two models:
 ```
