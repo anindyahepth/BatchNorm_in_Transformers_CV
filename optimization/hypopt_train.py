@@ -132,11 +132,11 @@ def train_model(model, train_loader, parameters):
                         lr=parameters.get("lr", 0.001), # 0.001 is default
                         weight_decay=parameters.get("lambda", 0.), #default is 0 weight decay
   )
-  scheduler = optim.lr_scheduler.StepLR(
-      optimizer,
-      step_size=int(parameters.get("step_size", 1)),
-      gamma=parameters.get("gamma", 1.0),  # default is no learning rate decay
-  )
+  # scheduler = optim.lr_scheduler.StepLR(
+  #     optimizer,
+  #     step_size=int(parameters.get("step_size", 1)),
+  #     gamma=parameters.get("gamma", 1.0),  # default is no learning rate decay
+  # )
   n_epochs = parameters.get("n_epochs", 3)
 
   #training block
@@ -149,7 +149,7 @@ def train_model(model, train_loader, parameters):
             loss = criterion(z, y)
             loss.backward()
             optimizer.step()
-            scheduler.step()
+            # scheduler.step()
 
   return model
 
@@ -208,7 +208,7 @@ if __name__ == "__main__":
     
 best_parameters, values, experiment, model = optimize(
     parameters=[
-        {"name": "lr", "type": "range", "bounds": [1e-6, 1e-3], "log_scale": True},
+        {"name": "lr", "type": "range", "bounds": [1e-5, 1e-3], "log_scale": True},
         {"name": "batchsize", "type": "range", "bounds": [20, 120]},
         #{"name": "gamma", "type": "range", "bounds": [0.95, 1.0]},
         #{"name": "stepsize", "type": "range", "bounds": [1, 3]},
