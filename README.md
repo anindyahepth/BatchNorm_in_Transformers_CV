@@ -86,6 +86,9 @@ The following graphs compare
 the performances of the models where the learning rate and batch size in each case by a Bayesian optimization 
 procedure. 
 
+![image](https://github.com/user-attachments/assets/ea3ae9fa-bd91-44c8-a0a2-3807953c8a00)
+
+
 
 ![TrainDur](https://github.com/anindyahepth/BatchNorm_in_Transformers_CV/assets/129802283/d1a0a7fd-f6e1-4e64-8872-a1520a64460b)
 
