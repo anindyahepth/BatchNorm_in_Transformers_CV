@@ -33,14 +33,9 @@ One can choose either cls tokens or a global pooling to implement the final clas
 by setting the hyperparameter `pool' to 'cls' or 'mean' respectively. One can also choose a learnable positional encoding vector or a 1d 
 sinusoidal vector, indicated by setting 'pos_emb ' to 'learn' or 'pe1d' respectively.
 
-Training on the FashionMNIST(FMNIST) and MNIST datasets from scratch, we see that ViTBN 
-is about 3-6 times faster compared to the standard ViT per epoch both during training phase
-and about 5 times faster during the testing phase. In addition, the former reaches the 
-highest accuracy after training for a far fewer number of epochs. The relevant graphs are 
-attached and explained below. 
 
 
-For the ViT/ViTBN comparison using the FMNIST dataset, we use the following set of parameters for the two models:
+For comparing the models using the MNIST dataset, we use the following architectures for the three models:
 ```
 ViT(image_size = 28,
     patch_size = 7,
@@ -54,6 +49,19 @@ ViT(image_size = 28,
     dropout = 0.0,
     emb_dropout = 0.0),
 
+ViTBNFFN(image_size = 28,
+    patch_size = 7,
+    num_classes = 10,
+    channels =1,
+    dim = 64,
+    depth = 6,
+    heads = 8,
+    mlp_dim = 128,
+    pool = 'cls',
+    dropout = 0.0,
+    emb_dropout = 0.0,
+    pos_emb ='learn'),
+
 ViTBN(image_size = 28,
     patch_size = 7,
     num_classes = 10,
@@ -65,11 +73,16 @@ ViTBN(image_size = 28,
     pool = 'cls',
     dropout = 0.0,
     emb_dropout = 0.0,
-    pos_emb ='learn'
+    pos_emb ='learn')
 
 ```
-Note that ViT uses the learned positional embedding if 'pool' = 'cls'. For both models, we use a learning rate 0.005, 
-and set all dropout parameters to zero. The results for 10 epochs of training/testing are shown below. 
+Note that ViT uses the learnable positional embedding if 'pool' = 'cls'. 
+Training on the MNIST dataset of handwritten digits from scratch, we see that the models with BatchNorm are 
+about 60% faster than the standard ViT in terms of the average inference time per epoch. 
+The gain in speed for the average training time per epoch can be even higher. The following graphs compare 
+the performances of the models where the learning rate and batch size in each case by a Bayesian optimization 
+procedure. 
+
 
 ![TrainDur](https://github.com/anindyahepth/BatchNorm_in_Transformers_CV/assets/129802283/d1a0a7fd-f6e1-4e64-8872-a1520a64460b)
 
