@@ -23,7 +23,7 @@ import os
 from datetime import datetime
 from google.colab import files
 
-from model.vitbnv1a import ViTBN
+from model.vitbn import ViTBN
 from emnist_digit_preprocessing import download_emnist
 from emnist_digit_preprocessing import MNISTCustomDataset
 
@@ -76,10 +76,10 @@ def get_datasets_emnist() :
 
 def get_datasets_mnist() :
   data_transform = transforms.Compose([
-	transforms.RandomRotation(60),
+	    transforms.RandomRotation(60),
     	transforms.RandomAffine(degrees = 0, translate = (0.3, 0.3)),
     	transforms_v2.RandomZoomOut(0,(1.0, 4.0), p=0.5),
-	transforms.Resize(28),
+	    transforms.Resize(28),
     	transforms.ToTensor()
     ])
 
@@ -93,7 +93,7 @@ def get_datasets_mnist() :
   return train_dataset, validation_dataset
 
 
-def train_model(model,train_loader,validation_loader, train_dataset, validation_dataset, optimizer,criterion,n_epochs):
+def train_model(model,train_loader,validation_loader, train_dataset, validation_dataset, optimizer, scheduler,criterion,n_epochs):
 
     #global variable
     N_test=len(validation_dataset)	
@@ -114,6 +114,8 @@ def train_model(model,train_loader,validation_loader, train_dataset, validation_
     correct=0.
     delta_train=0
     delta_val=0
+    train_time=0
+    test_time=0
 
     for epoch in range(n_epochs):
         COST=0.
@@ -130,6 +132,7 @@ def train_model(model,train_loader,validation_loader, train_dataset, validation_
             _, yhat = torch.max(z, 1)
             correct_train += (yhat == y).sum().item()
             #loss_list.append(loss.data)
+        scheduler.step()
         cost_list.append(COST)
         accuracy_train= correct_train/N_train
         accuracy_train_list.append(accuracy_train)
@@ -147,13 +150,16 @@ def train_model(model,train_loader,validation_loader, train_dataset, validation_
             correct += (yhat == y_test).sum().item()
             loss_test = criterion(z, y_test)
             COST_test +=loss_test.data.item() 
-	cost_test_list.append(COST_test)
+        cost_test_list.append(COST_test)
         accuracy = correct / N_test
         accuracy_list.append(accuracy)
         delta_val=datetime.now() - t1
         dur_list_val.append(delta_val.total_seconds())
 
-    return cost_list, accuracy_list, dur_list_train, dur_list_val, accuracy_train_list, cost_test_list
+    train_time = sum(dur_list_train)/n_epochs
+    test_time = sum(dur_list_val)/n_epochs
+
+    return cost_list, accuracy_list, dur_list_train, dur_list_val, accuracy_train_list, cost_test_list, train_time, test_time
 
 
 
@@ -175,7 +181,7 @@ def get_model():
                 pos_emb ='learn'
     )
 
-  model.load_state_dict(torch.load("model_pth_dir/ViTBNFFN_opt_aug_130.pth"))
+  #model.load_state_dict(torch.load("model.pth"))
 
   return model
 
@@ -188,13 +194,14 @@ if __name__ == "__main__":
     mlflow.pytorch.autolog()
 
 
-    learning_rate = 0.0014
-    n_epochs = 10
-    batch_size = 53
+    learning_rate = 0.00063
+    n_epochs = 50
+    batch_size = 20
+    gamma = 0.24
     criterion = nn.CrossEntropyLoss()
     
 
-    with mlflow.start_run(experiment_id=45):
+    with mlflow.start_run(experiment_id=49):
         train_dataset, validation_dataset = get_datasets_mnist()
         model = get_model()
         #logged_model = 'runs:/6f43f730540040b1a28fbcce66b40dc3/model_mnist'
@@ -202,11 +209,12 @@ if __name__ == "__main__":
         
         
         optimizer = torch.optim.Adam(model.parameters(), lr = learning_rate)
+        scheduler = optim.lr_scheduler.StepLR(optimizer,step_size= 10,gamma= gamma)
         train_loader = torch.utils.data.DataLoader(dataset=train_dataset, batch_size=batch_size,shuffle=True)
         validation_loader = torch.utils.data.DataLoader(dataset=validation_dataset, batch_size=5000, shuffle=True)
         
         
-        cost_list, accuracy_list, dur_list_train, dur_list_val, accuracy_train_list, cost_test_list = train_model(model,train_loader,validation_loader, train_dataset, validation_dataset,optimizer,criterion,n_epochs)
+        cost_list, accuracy_list, dur_list_train, dur_list_val, accuracy_train_list, cost_test_list, train_time, test_time = train_model(model,train_loader,validation_loader, train_dataset, validation_dataset,optimizer, scheduler, criterion,n_epochs)
 
 		
 
@@ -222,11 +230,19 @@ if __name__ == "__main__":
         mlflow.log_params({
             "learning_rate": learning_rate,
 	    "batch_size" : batch_size,
-            "epochs": n_epochs
+            "epochs": n_epochs,
+            "decay_rate": gamma
         })
         
         #mlflow.pytorch.log_model(model,"model_mnist")
         
+        mlflow.log_metrics(
+            {
+              "avg_train_time": train_time,
+              "average_test_time" : test_time
+
+            })
+
         for i in range(n_epochs):
         	mlflow.log_metrics(
             {
@@ -235,16 +251,16 @@ if __name__ == "__main__":
                 "training_time": dur_list_train[i],
                 "validation_time": dur_list_val[i],
                 "training_accuracy": accuracy_train_list[i],
-	        "test_loss": cost_test_list[i]
+	              "test_loss": cost_test_list[i]
             },step = i+1
         )
 
         #print("Saving the model...")
         
-#torch.save(model.state_dict(), 'model.pth')
+torch.save(model.state_dict(), 'model.pth')
 
 # download checkpoint file
 
-#files.download('model.pth')     
+files.download('model.pth')     
 
 print("done.")
