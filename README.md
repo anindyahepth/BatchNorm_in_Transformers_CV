@@ -79,7 +79,10 @@ ViTBN(image_size = 28,
 Note that ViT uses the learnable positional embedding if 'pool' = 'cls'. 
 Training on the MNIST dataset of handwritten digits from scratch, we see that the models with BatchNorm are 
 about 60% faster than the standard ViT in terms of the average inference time per epoch. 
-The gain in speed for the average training time per epoch can be even higher. The following graphs compare 
+The gain in speed for the average training time per epoch can be even higher. As an example, one may consider 
+training and testing the models where the learning rate and batch size in each case is determined by a Bayesian optimization 
+procedure. 
+The following graphs compare 
 the performances of the models where the learning rate and batch size in each case by a Bayesian optimization 
 procedure. 
 
