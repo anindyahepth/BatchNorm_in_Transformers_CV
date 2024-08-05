@@ -79,29 +79,20 @@ ViTBN(image_size = 28,
 Note that ViT uses the learnable positional embedding if 'pool' = 'cls'. 
 Training on the MNIST dataset of handwritten digits from scratch, we see that the models with BatchNorm are 
 about 60% faster than the standard ViT in terms of the average inference time per epoch. 
-The gain in speed for the average training time per epoch can be even higher. As an example, one may consider 
-training and testing the models where the learning rate and batch size in each case is determined by a Bayesian optimization 
-procedure. 
-The following graphs compare 
-the performances of the models where the learning rate and batch size in each case by a Bayesian optimization 
-procedure. 
+The gain in speed for the average training time per epoch can be even higher. 
+
+As an example, consider training and testing the models with the learning rate and the batch size in 
+each case being determined by a Bayesian optimization procedure. The following graphs compare 
+the performances of the models on four metrics as functions of epochs - the training time, the testing time, 
+the training loss and test accuracy. 
 
 ![image](https://github.com/user-attachments/assets/ea3ae9fa-bd91-44c8-a0a2-3807953c8a00)
 
 
 
-![TrainDur](https://github.com/anindyahepth/BatchNorm_in_Transformers_CV/assets/129802283/d1a0a7fd-f6e1-4e64-8872-a1520a64460b)
-
-
-![TestDur](https://github.com/anindyahepth/BatchNorm_in_Transformers_CV/assets/129802283/5d446ef1-11c7-446f-8020-9af584df01ac)
-
-![TestAcc](https://github.com/anindyahepth/BatchNorm_in_Transformers_CV/assets/129802283/91bab246-f389-48ea-9713-793e47ff6f5b)
-
-
-Finally, we train ViTBN on the MNIST data for 100 epochs and use the trained model to 
-build a web app for recognizing handwritten digits. The webapp can be found 
+Finally, we train the ViTBNFFN model on the MNIST data for 100 epochs and use the trained model to 
+build a web app with a Flask back-end for recognizing handwritten digits. The webapp can be found 
 here : https://anindyadey.pythonanywhere.com/
-The app has an html-css-javascript frontend and a Flask backend. 
 
 
 
