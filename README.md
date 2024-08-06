@@ -1,10 +1,11 @@
 
 Batch Normalization is a powerful regularization method for Neural Networks which can 
-substantially speed up the learning process in CNNs. We investigate the impact of Batch Normalization 
+substantially speed up the learning process in CNNs. On the other hand, LayerNorm is used as 
+the default normalization technique in Transformers. We investigate the impact of Batch Normalization 
 in the most basic Transformer-based model for image classification - the Vision Transformer (ViT). 
 We consider two distinct models:
 
-1. **ViTBNFFN** : This implement a batchnorm layer in the Feed Forward Netweork (FFN) component of the standard ViT.
+1. **ViTBNFFN** : This implements a batchnorm layer in the Feed Forward Netweork (FFN) component of the standard ViT.
 2. **ViTBN** : This replaces all LayerNorms with BatchNorms.
 
 
@@ -76,14 +77,15 @@ ViTBN(image_size = 28,
     pos_emb ='learn')
 
 ```
-Note that ViT uses the learnable positional embedding if 'pool' = 'cls'. 
+Note that ViT uses the learnable positional embedding by default if 'pool' = 'cls'. 
+
 Training on the MNIST dataset of handwritten digits from scratch, we see that the models with BatchNorm are 
 about 60% faster than the standard ViT in terms of the average inference time per epoch. 
 The gain in speed for the average training time per epoch can be even higher. 
 
 As an example, consider training and testing the models with the learning rate and the batch size in 
 each case being determined by a Bayesian optimization procedure. The following graphs compare 
-the performances of the models on four metrics as functions of epochs - the training time (in seconds), 
+the performances of the optimized models on four metrics as functions of epochs - the training time (in seconds), 
 the testing time (in seconds), the training loss and test accuracy. 
 
 ![image](https://github.com/user-attachments/assets/ea3ae9fa-bd91-44c8-a0a2-3807953c8a00)
