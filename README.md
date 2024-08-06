@@ -3,6 +3,7 @@ Batch Normalization is a powerful regularization method for Neural Networks whic
 substantially speed up the learning process in CNNs. On the other hand, LayerNorm is used as 
 the default normalization technique in Transformers. We investigate the impact of Batch Normalization 
 in the most basic Transformer-based model for image classification - the Vision Transformer (ViT). 
+
 We consider two distinct models:
 
 1. **ViTBNFFN** : This implements a batchnorm layer in the Feed Forward Netweork (FFN) component of the standard ViT.
@@ -90,7 +91,7 @@ the testing time (in seconds), the training loss and test accuracy.
 
 ![image](https://github.com/user-attachments/assets/ea3ae9fa-bd91-44c8-a0a2-3807953c8a00)
 
-
+For the full story, check out the article : https://medium.com/@anindya.hepth/speeding-up-the-vision-transformer-with-batch-normalization-d37f13f20ae7 
 
 Finally, we train the ViTBNFFN model on the MNIST data for 100 epochs and use the trained model to 
 build a web app with a Flask back-end for recognizing handwritten digits. The webapp can be found 
