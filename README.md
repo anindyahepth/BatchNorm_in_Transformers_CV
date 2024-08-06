@@ -83,8 +83,8 @@ The gain in speed for the average training time per epoch can be even higher.
 
 As an example, consider training and testing the models with the learning rate and the batch size in 
 each case being determined by a Bayesian optimization procedure. The following graphs compare 
-the performances of the models on four metrics as functions of epochs - the training time, the testing time, 
-the training loss and test accuracy. 
+the performances of the models on four metrics as functions of epochs - the training time (in seconds), 
+the testing time (in seconds), the training loss and test accuracy. 
 
 ![image](https://github.com/user-attachments/assets/ea3ae9fa-bd91-44c8-a0a2-3807953c8a00)
 
