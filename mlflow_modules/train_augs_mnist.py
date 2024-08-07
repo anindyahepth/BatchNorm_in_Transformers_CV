@@ -76,10 +76,10 @@ def get_datasets_emnist() :
 
 def get_datasets_mnist() :
   data_transform = transforms.Compose([
-	    transforms.RandomRotation(60),
+	transforms.RandomRotation(60),
     	transforms.RandomAffine(degrees = 0, translate = (0.3, 0.3)),
     	transforms_v2.RandomZoomOut(0,(1.0, 4.0), p=0.5),
-	    transforms.Resize(28),
+	transforms.Resize(28),
     	transforms.ToTensor()
     ])
 
