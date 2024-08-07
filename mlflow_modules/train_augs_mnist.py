@@ -76,9 +76,9 @@ def get_datasets_emnist() :
 
 def get_datasets_mnist() :
   data_transform = transforms.Compose([
-	transforms.RandomRotation(60),
-    	transforms.RandomAffine(degrees = 0, translate = (0.3, 0.3)),
-    	transforms_v2.RandomZoomOut(0,(1.0, 4.0), p=0.5),
+	transforms.RandomRotation(20),
+    	transforms.RandomAffine(degrees = 0, translate = (0.2, 0.2)),
+    	transforms_v2.RandomZoomOut(0,(2.0, 3.0), p=0.2),
 	transforms.Resize(28),
     	transforms.ToTensor()
     ])
@@ -198,6 +198,7 @@ if __name__ == "__main__":
     n_epochs = 50
     batch_size = 20
     gamma = 0.24
+    step_size = 1
     criterion = nn.CrossEntropyLoss()
     
 
@@ -209,7 +210,7 @@ if __name__ == "__main__":
         
         
         optimizer = torch.optim.Adam(model.parameters(), lr = learning_rate)
-        scheduler = optim.lr_scheduler.StepLR(optimizer,step_size= 10,gamma= gamma)
+        scheduler = optim.lr_scheduler.StepLR(optimizer,step_size= step_size,gamma= gamma)
         train_loader = torch.utils.data.DataLoader(dataset=train_dataset, batch_size=batch_size,shuffle=True)
         validation_loader = torch.utils.data.DataLoader(dataset=validation_dataset, batch_size=5000, shuffle=True)
         
@@ -231,7 +232,8 @@ if __name__ == "__main__":
             "learning_rate": learning_rate,
 	    "batch_size" : batch_size,
             "epochs": n_epochs,
-            "decay_rate": gamma
+            "decay_rate": gamma,
+	    "step_size" : step_size
         })
         
         #mlflow.pytorch.log_model(model,"model_mnist")
@@ -251,7 +253,7 @@ if __name__ == "__main__":
                 "training_time": dur_list_train[i],
                 "validation_time": dur_list_val[i],
                 "training_accuracy": accuracy_train_list[i],
-	              "test_loss": cost_test_list[i]
+	        "test_loss": cost_test_list[i]
             },step = i+1
         )
 
