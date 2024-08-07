@@ -72,9 +72,9 @@ def get_datasets_emnist() :
 
 def get_datasets_mnist() :
   data_transform = transforms.Compose([
-     transforms.RandomRotation(60),
-     transforms.RandomAffine(degrees = 0, translate = (0.3, 0.3)),
-     transforms_v2.RandomZoomOut(0,(1.0, 4.0), p=0.5),
+     transforms.RandomRotation(20),
+     transforms.RandomAffine(degrees = 0, translate = (0.2, 0.2)),
+     transforms_v2.RandomZoomOut(0,(2.0, 3.0), p=0.2),
      transforms.Resize(28),
      transforms.ToTensor()
     ])
@@ -132,11 +132,11 @@ def train_model(model, train_loader, parameters):
                         lr=parameters.get("lr", 0.001), # 0.001 is default
                         weight_decay=parameters.get("lambda", 0.), #default is 0 weight decay
   )
-  # scheduler = optim.lr_scheduler.StepLR(
-  #     optimizer,
-  #     step_size=int(parameters.get("step_size", 1)),
-  #     gamma=parameters.get("gamma", 1.0),  # default is no learning rate decay
-  # )
+  scheduler = optim.lr_scheduler.StepLR(
+      optimizer,
+      step_size=int(parameters.get("step_size", 1)),
+      gamma=parameters.get("gamma", 1.0),  # default is no learning rate decay
+  )
   n_epochs = parameters.get("n_epochs", 3)
 
   #training block
@@ -149,7 +149,7 @@ def train_model(model, train_loader, parameters):
             loss = criterion(z, y)
             loss.backward()
             optimizer.step()
-            # scheduler.step()
+        scheduler.step()
 
   return model
 
@@ -208,10 +208,10 @@ if __name__ == "__main__":
     
 best_parameters, values, experiment, model = optimize(
     parameters=[
-        {"name": "lr", "type": "range", "bounds": [1e-5, 1e-3], "log_scale": True},
+        {"name": "lr", "type": "range", "bounds": [1e-5, 1e-2], "log_scale": True},
         {"name": "batchsize", "type": "range", "bounds": [20, 120]},
-        #{"name": "gamma", "type": "range", "bounds": [0.95, 1.0]},
-        #{"name": "stepsize", "type": "range", "bounds": [1, 3]},
+        {"name": "gamma", "type": "range", "bounds": [0.95, 1.0]},
+        {"name": "stepsize", "type": "range", "bounds": [1, 3]},
         #{"name": "lambda", "type": "range", "bounds": [1e-4, 1e-1], "log_scale": True},
         #{"name": "max_epoch", "type": "range", "bounds": [1, 30]},
         #{"name": "stepsize", "type": "range", "bounds": [20, 40]},
