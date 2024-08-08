@@ -129,7 +129,7 @@ if __name__ == "__main__":
         })
         
         mlflow.log_metrics({
-            "average_inf_time" : sum(dur_list)/n_epochs
+            "average_inf_time" : sum(dur_list_val)/n_epochs
 
        })
         
