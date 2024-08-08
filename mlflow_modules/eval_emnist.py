@@ -57,9 +57,9 @@ def eval_model(model,validation_dataset, validation_loader,n_epochs):
     dur_list_val = []
     delta_val =0
     correct=0
-    class_correct = [[0.for i in range(10)] for j in range(n_epochs)]
-    class_total= [[0.for i in range (10)] for j in range(n_epochs)]
-    class_accuracy =[[0.for i in range(10)] for j in range(n_epochs)]
+    # class_correct = [[0.for i in range(10)] for j in range(n_epochs)]
+    # class_total= [[0.for i in range (10)] for j in range(n_epochs)]
+    # class_accuracy =[[0.for i in range(10)] for j in range(n_epochs)]
     
   
     #perform a prediction on the validation  data
@@ -128,7 +128,10 @@ if __name__ == "__main__":
             "batch_size": batch_size
         })
         
-      
+        mlflow.log_metrics({
+            "average_inf_time" : sum(dur_list)/n_epochs
+
+       })
         
         for i in range(n_epochs):
         	mlflow.log_metrics(
