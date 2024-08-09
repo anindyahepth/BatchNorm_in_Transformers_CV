@@ -158,8 +158,9 @@ def train_model(model,train_loader,validation_loader, train_dataset, validation_
 
     train_time = sum(dur_list_train)/n_epochs
     test_time = sum(dur_list_val)/n_epochs
+    fin_lr = scheduler.optimizer.param_groups[0]["lr"]
 
-    return cost_list, accuracy_list, dur_list_train, dur_list_val, accuracy_train_list, cost_test_list, train_time, test_time
+    return cost_list, accuracy_list, dur_list_train, dur_list_val, accuracy_train_list, cost_test_list, train_time, test_time, fin_lr
 
 
 
@@ -215,7 +216,7 @@ if __name__ == "__main__":
         validation_loader = torch.utils.data.DataLoader(dataset=validation_dataset, batch_size=5000, shuffle=True)
         
         
-        cost_list, accuracy_list, dur_list_train, dur_list_val, accuracy_train_list, cost_test_list, train_time, test_time = train_model(model,train_loader,validation_loader, train_dataset, validation_dataset,optimizer, scheduler, criterion,n_epochs)
+        cost_list, accuracy_list, dur_list_train, dur_list_val, accuracy_train_list, cost_test_list, train_time, test_time, fin_lr = train_model(model,train_loader,validation_loader, train_dataset, validation_dataset,optimizer, scheduler, criterion,n_epochs)
 
 		
 
@@ -241,7 +242,8 @@ if __name__ == "__main__":
         mlflow.log_metrics(
             {
               "avg_train_time": train_time,
-              "average_test_time" : test_time
+              "average_test_time" : test_time,
+	      "final_lr" : fin_lr
 
             })
 
@@ -266,3 +268,4 @@ torch.save(model.state_dict(), 'model.pth')
 files.download('model.pth')     
 
 print("done.")
+print("fin_lr:", fin_lr)
