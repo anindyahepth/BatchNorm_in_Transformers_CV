@@ -1,3 +1,16 @@
+import numpy as np 
+import pandas as pd
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+import torch.utils.data
+import torchvision.transforms as transforms
+import torchvision.transforms.v2 as transforms_v2
+import torchvision
+import torchvision.datasets as dsets
+import torch.optim as optim
+import torch.nn.init as init
+
 class CNN(nn.Module):
     def __init__(self):
         super(CNN, self).__init__()
