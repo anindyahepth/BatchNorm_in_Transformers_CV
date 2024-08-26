@@ -63,19 +63,26 @@ class Attention(nn.Module):
         return self.to_out(out)
 
 class FeedForward(nn.Module):
-    def __init__(self, dim, hidden_dim, dropout = 0.):
-        super().__init__()
-        self.net = nn.Sequential(
-            nn.LayerNorm(dim),
-            nn.Linear(dim, hidden_dim),
-            nn.GELU(),
-            nn.Dropout(dropout),
-            nn.Linear(hidden_dim, dim),
-            nn.Dropout(dropout)
-        )
+  def __init__(self, dim, hidden_dim, dropout=0.):
+    super().__init__()
+      
+    self.Lin1 = nn.Linear(dim,hidden_dim)
+    self.act = nn.GELU()
+    self.BN = nn.BatchNorm1d(hidden_dim)
+    self.drop = nn.Dropout(dropout)
+    self.Lin2 = nn.Linear(hidden_dim, dim)
 
-    def forward(self, x):
-        return self.net(x)
+
+  def forward(self, x):
+      x = self.Lin1(x)
+      x = rearrange(x, 'b n d -> b d n')
+      x = self.BN(x)
+      x = rearrange(x, 'b d n -> b n d')
+      x = self.act(x)
+      x = self.drop(x)
+      x = self.Lin2(x)
+      return x
+
 
 
 class Transformer(nn.Module):
@@ -100,64 +107,64 @@ class Transformer(nn.Module):
 
 # class Multihead_Attention
 
-class Multihead_Attention(nn.Module):
-  def __init__(self, dim, heads, dim_head, dropout):
-    super().__init__()
+# class Multihead_Attention(nn.Module):
+#   def __init__(self, dim, heads, dim_head, dropout):
+#     super().__init__()
 
-    latent_dim = dim_head *  heads
-    project_out = not (heads == 1 and dim_head == dim)
+#     latent_dim = dim_head *  heads
+#     project_out = not (heads == 1 and dim_head == dim)
 
-    self.heads = heads
-    self.dim_head = dim_head
-    self.latent_dim = latent_dim
-    self.scale = dim_head ** -0.5
-
-
-    self.norm = nn.LayerNorm(dim)
-    self.atten = nn.Softmax(dim = -1)
-    self.dropout = nn.Dropout(dropout)
-
-    self.patch_emb = nn.Linear(dim, latent_dim * 3)
-    self.out_proj = nn.Sequential(
-            nn.Linear(latent_dim, dim),
-            nn.Dropout(dropout)
-        ) if project_out else nn.Identity()
-
-  def forward(self, x):
-    x = self.norm(x)
-    x = self.patch_emb(x)
-    qkv = torch.chunk(x, 3, dim = -1)
-    q,k,v = map(lambda t: rearrange(t, 'b n (h d) -> b h n d', h = self.heads), qkv)
-    dots = torch.matmul(q, k.transpose(-1, -2)) * self.scale
-    attn = self.atten(dots)
-    attn = self.dropout(attn)
-    out = torch.matmul(attn, v)
-    out = rearrange(out, 'b h n d -> b n (h d)')
-    return self.out_proj(out)
+#     self.heads = heads
+#     self.dim_head = dim_head
+#     self.latent_dim = latent_dim
+#     self.scale = dim_head ** -0.5
 
 
-# class FeedForward
+#     self.norm = nn.LayerNorm(dim)
+#     self.atten = nn.Softmax(dim = -1)
+#     self.dropout = nn.Dropout(dropout)
 
-class FeedForward(nn.Module):
-  def __init__(self, dim, hidden_dim, dropout=0.):
-    super().__init__()
+#     self.patch_emb = nn.Linear(dim, latent_dim * 3)
+#     self.out_proj = nn.Sequential(
+#             nn.Linear(latent_dim, dim),
+#             nn.Dropout(dropout)
+#         ) if project_out else nn.Identity()
+
+#   def forward(self, x):
+#     x = self.norm(x)
+#     x = self.patch_emb(x)
+#     qkv = torch.chunk(x, 3, dim = -1)
+#     q,k,v = map(lambda t: rearrange(t, 'b n (h d) -> b h n d', h = self.heads), qkv)
+#     dots = torch.matmul(q, k.transpose(-1, -2)) * self.scale
+#     attn = self.atten(dots)
+#     attn = self.dropout(attn)
+#     out = torch.matmul(attn, v)
+#     out = rearrange(out, 'b h n d -> b n (h d)')
+#     return self.out_proj(out)
+
+
+# # class FeedForward
+
+# class FeedForward(nn.Module):
+#   def __init__(self, dim, hidden_dim, dropout=0.):
+#     super().__init__()
       
-    self.Lin1 = nn.Linear(dim,hidden_dim)
-    self.act = nn.GELU()
-    self.BN = nn.BatchNorm1d(hidden_dim)
-    self.drop = nn.Dropout(dropout)
-    self.Lin2 = nn.Linear(hidden_dim, dim)
+#     self.Lin1 = nn.Linear(dim,hidden_dim)
+#     self.act = nn.GELU()
+#     self.BN = nn.BatchNorm1d(hidden_dim)
+#     self.drop = nn.Dropout(dropout)
+#     self.Lin2 = nn.Linear(hidden_dim, dim)
 
 
-  def forward(self, x):
-      x = self.Lin1(x)
-      x = rearrange(x, 'b n d -> b d n')
-      x = self.BN(x)
-      x = rearrange(x, 'b d n -> b n d')
-      x = self.act(x)
-      x = self.drop(x)
-      x = self.Lin2(x)
-      return x
+#   def forward(self, x):
+#       x = self.Lin1(x)
+#       x = rearrange(x, 'b n d -> b d n')
+#       x = self.BN(x)
+#       x = rearrange(x, 'b d n -> b n d')
+#       x = self.act(x)
+#       x = self.drop(x)
+#       x = self.Lin2(x)
+#       return x
 
 
 # class Transformer
