@@ -26,124 +26,41 @@ def posemb_sincos_1d(h,dim, temperature: int = 10000, dtype = torch.float32):
 
 # class attention
 
-class Attention(nn.Module):
-    def __init__(self, dim, heads = 8, dim_head = 64, dropout = 0.):
-        super().__init__()
-        inner_dim = dim_head *  heads
-        project_out = not (heads == 1 and dim_head == dim)
+# class Attention(nn.Module):
+#     def __init__(self, dim, heads = 8, dim_head = 64, dropout = 0.):
+#         super().__init__()
+#         inner_dim = dim_head *  heads
+#         project_out = not (heads == 1 and dim_head == dim)
 
-        self.heads = heads
-        self.scale = dim_head ** -0.5
+#         self.heads = heads
+#         self.scale = dim_head ** -0.5
 
-        self.norm = nn.LayerNorm(dim)
+#         self.norm = nn.LayerNorm(dim)
 
-        self.attend = nn.Softmax(dim = -1)
-        self.dropout = nn.Dropout(dropout)
+#         self.attend = nn.Softmax(dim = -1)
+#         self.dropout = nn.Dropout(dropout)
 
-        self.to_qkv = nn.Linear(dim, inner_dim * 3, bias = False)
+#         self.to_qkv = nn.Linear(dim, inner_dim * 3, bias = False)
 
-        self.to_out = nn.Sequential(
-            nn.Linear(inner_dim, dim),
-            nn.Dropout(dropout)
-        ) if project_out else nn.Identity()
-
-    def forward(self, x):
-        x = self.norm(x)
-
-        qkv = self.to_qkv(x).chunk(3, dim = -1)
-        q, k, v = map(lambda t: rearrange(t, 'b n (h d) -> b h n d', h = self.heads), qkv)
-
-        dots = torch.matmul(q, k.transpose(-1, -2)) * self.scale
-
-        attn = self.attend(dots)
-        attn = self.dropout(attn)
-
-        out = torch.matmul(attn, v)
-        out = rearrange(out, 'b h n d -> b n (h d)')
-        return self.to_out(out)
-
-class FeedForward(nn.Module):
-  def __init__(self, dim, hidden_dim, dropout=0.):
-    super().__init__()
-      
-    self.Lin1 = nn.Linear(dim,hidden_dim)
-    self.act = nn.GELU()
-    self.BN = nn.BatchNorm1d(hidden_dim)
-    self.drop = nn.Dropout(dropout)
-    self.Lin2 = nn.Linear(hidden_dim, dim)
-
-
-  def forward(self, x):
-      x = self.Lin1(x)
-      x = rearrange(x, 'b n d -> b d n')
-      x = self.BN(x)
-      x = rearrange(x, 'b d n -> b n d')
-      x = self.act(x)
-      x = self.drop(x)
-      x = self.Lin2(x)
-      return x
-
-
-
-class Transformer(nn.Module):
-    def __init__(self, dim, depth, heads, dim_head, mlp_dim, dropout = 0.):
-        super().__init__()
-        self.norm = nn.LayerNorm(dim)
-        self.layers = nn.ModuleList([])
-        for _ in range(depth):
-            self.layers.append(nn.ModuleList([
-                Attention(dim, heads = heads, dim_head = dim_head, dropout = dropout),
-                FeedForward(dim, mlp_dim, dropout = dropout)
-            ]))
-
-    def forward(self, x):
-        for attn, ff in self.layers:
-            x = attn(x) + x
-            x = ff(x) + x
-
-        return self.norm(x)
-
-
-
-# class Multihead_Attention
-
-# class Multihead_Attention(nn.Module):
-#   def __init__(self, dim, heads, dim_head, dropout):
-#     super().__init__()
-
-#     latent_dim = dim_head *  heads
-#     project_out = not (heads == 1 and dim_head == dim)
-
-#     self.heads = heads
-#     self.dim_head = dim_head
-#     self.latent_dim = latent_dim
-#     self.scale = dim_head ** -0.5
-
-
-#     self.norm = nn.LayerNorm(dim)
-#     self.atten = nn.Softmax(dim = -1)
-#     self.dropout = nn.Dropout(dropout)
-
-#     self.patch_emb = nn.Linear(dim, latent_dim * 3)
-#     self.out_proj = nn.Sequential(
-#             nn.Linear(latent_dim, dim),
+#         self.to_out = nn.Sequential(
+#             nn.Linear(inner_dim, dim),
 #             nn.Dropout(dropout)
-#         ) if project_out else nn.Identity()
+    #     ) if project_out else nn.Identity()
 
-#   def forward(self, x):
-#     x = self.norm(x)
-#     x = self.patch_emb(x)
-#     qkv = torch.chunk(x, 3, dim = -1)
-#     q,k,v = map(lambda t: rearrange(t, 'b n (h d) -> b h n d', h = self.heads), qkv)
-#     dots = torch.matmul(q, k.transpose(-1, -2)) * self.scale
-#     attn = self.atten(dots)
-#     attn = self.dropout(attn)
-#     out = torch.matmul(attn, v)
-#     out = rearrange(out, 'b h n d -> b n (h d)')
-#     return self.out_proj(out)
+    # def forward(self, x):
+    #     x = self.norm(x)
 
+    #     qkv = self.to_qkv(x).chunk(3, dim = -1)
+    #     q, k, v = map(lambda t: rearrange(t, 'b n (h d) -> b h n d', h = self.heads), qkv)
 
-# # class FeedForward
+    #     dots = torch.matmul(q, k.transpose(-1, -2)) * self.scale
+
+    #     attn = self.attend(dots)
+    #     attn = self.dropout(attn)
+
+    #     out = torch.matmul(attn, v)
+    #     out = rearrange(out, 'b h n d -> b n (h d)')
+    #     return self.to_out(out)
 
 # class FeedForward(nn.Module):
 #   def __init__(self, dim, hidden_dim, dropout=0.):
@@ -167,25 +84,108 @@ class Transformer(nn.Module):
 #       return x
 
 
-# class Transformer
 
 # class Transformer(nn.Module):
-#   def __init__(self, dim, depth, heads, dim_head, mlp_dim, dropout = 0.) :
-#     super().__init__()
-#     self.norm = nn.LayerNorm(dim)
-#     self.layers = nn.ModuleList([])
-#     for _ in range(depth):
-#         self.layers.append(nn.ModuleList([
-#           Multihead_Attention(dim, heads = heads, dim_head = dim_head, dropout = dropout),
-#           FeedForward(dim, mlp_dim, dropout = dropout)
-#         ]))
+#     def __init__(self, dim, depth, heads, dim_head, mlp_dim, dropout = 0.):
+#         super().__init__()
+#         self.norm = nn.LayerNorm(dim)
+#         self.layers = nn.ModuleList([])
+#         for _ in range(depth):
+#             self.layers.append(nn.ModuleList([
+#                 Attention(dim, heads = heads, dim_head = dim_head, dropout = dropout),
+#                 FeedForward(dim, mlp_dim, dropout = dropout)
+#             ]))
 
-#   def forward(self, x) :
-#     for attn, ff in self.layers:
-#       x = attn(x) + x
-#       x = ff(x) + x
+#     def forward(self, x):
+#         for attn, ff in self.layers:
+#             x = attn(x) + x
+#             x = ff(x) + x
 
-#       return self.norm(x)
+#         return self.norm(x)
+
+
+
+# class Multihead_Attention
+
+class Multihead_Attention(nn.Module):
+  def __init__(self, dim, heads, dim_head, dropout):
+    super().__init__()
+
+    latent_dim = dim_head *  heads
+    project_out = not (heads == 1 and dim_head == dim)
+
+    self.heads = heads
+    self.dim_head = dim_head
+    self.latent_dim = latent_dim
+    self.scale = dim_head ** -0.5
+
+
+    self.norm = nn.LayerNorm(dim)
+    self.atten = nn.Softmax(dim = -1)
+    self.dropout = nn.Dropout(dropout)
+
+    self.patch_emb = nn.Linear(dim, latent_dim * 3)
+    self.out_proj = nn.Sequential(
+            nn.Linear(latent_dim, dim),
+            nn.Dropout(dropout)
+        ) if project_out else nn.Identity()
+
+  def forward(self, x):
+    x = self.norm(x)
+    x = self.patch_emb(x)
+    qkv = torch.chunk(x, 3, dim = -1)
+    q,k,v = map(lambda t: rearrange(t, 'b n (h d) -> b h n d', h = self.heads), qkv)
+    dots = torch.matmul(q, k.transpose(-1, -2)) * self.scale
+    attn = self.atten(dots)
+    attn = self.dropout(attn)
+    out = torch.matmul(attn, v)
+    out = rearrange(out, 'b h n d -> b n (h d)')
+    return self.out_proj(out)
+
+
+# class FeedForward
+
+class FeedForward(nn.Module):
+  def __init__(self, dim, hidden_dim, dropout=0.):
+    super().__init__()
+      
+    self.Lin1 = nn.Linear(dim,hidden_dim)
+    self.act = nn.GELU()
+    self.BN = nn.BatchNorm1d(hidden_dim)
+    self.drop = nn.Dropout(dropout)
+    self.Lin2 = nn.Linear(hidden_dim, dim)
+
+
+  def forward(self, x):
+      x = self.Lin1(x)
+      x = rearrange(x, 'b n d -> b d n')
+      x = self.BN(x)
+      x = rearrange(x, 'b d n -> b n d')
+      x = self.act(x)
+      x = self.drop(x)
+      x = self.Lin2(x)
+      return x
+
+
+# class Transformer
+
+class Transformer(nn.Module):
+  def __init__(self, dim, depth, heads, dim_head, mlp_dim, dropout = 0.) :
+    super().__init__()
+    self.norm = nn.LayerNorm(dim)
+    self.layers = nn.ModuleList([])
+    for _ in range(depth):
+        self.layers.append(nn.ModuleList([
+          Multihead_Attention(dim, heads = heads, dim_head = dim_head, dropout = dropout),
+          FeedForward(dim, mlp_dim, dropout = dropout)
+        ]))
+
+  def forward(self, x) :
+    for attn, ff in self.layers:
+      x = attn(x) + x
+      x = ff(x) + x
+
+    return self.norm(x)
 
 
 # class ViTBNFFN
