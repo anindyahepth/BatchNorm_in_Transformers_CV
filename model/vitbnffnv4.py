@@ -106,7 +106,7 @@ class Transformer(nn.Module):
       x = attn(x) + x
       x = ff(x) + x
 
-      return self.norm(x)
+    return self.norm(x)
 
 
 # class ViTBN
