@@ -112,8 +112,7 @@ class Transformer(nn.Module):
     for attn, ff in self.layers:
       x = attn(x) + x
       x = ff(x) + x
-
-      return self.norm(x)
+    return self.norm(x)
 
 
 # class ViTBN
