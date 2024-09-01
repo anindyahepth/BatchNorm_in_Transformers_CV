@@ -31,12 +31,12 @@ class Batch_Norm(nn.Module):
   def __init__(self, feature_dim):
     super().__init__()
 
-    self.BN = nn.BatchNorm1d(feature_dim)
+    self.BN = nn.BatchNorm2d(feature_dim)
 
   def forward(self, x):
-    x = rearrange(x, 'b n d -> b d n')
+    x = rearrange(x, 'b n d -> b d n 1')
     x = self.BN(x)
-    x = rearrange(x, 'b d n -> b n d')
+    x = rearrange(x, 'b d n 1 -> b n d')
     return x
 
 # class attention
