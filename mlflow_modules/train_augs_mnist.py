@@ -37,6 +37,8 @@ mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI"))
 #os.environ['MLFLOW_TRACKING_USERNAME'] = USER_NAME
 #os.environ['MLFLOW_TRACKING_PASSWORD'] = PASSWORD
 
+#EMNIST_DATASET
+
 def get_datasets_emnist() :
   dir_root = '/content/'
   file_dict={
@@ -73,6 +75,7 @@ def get_datasets_emnist() :
 
   return train_dataset, validation_dataset
 
+#MNIST_DATASET
 
 def get_datasets_mnist() :
   data_transform = transforms.Compose([
@@ -91,6 +94,24 @@ def get_datasets_mnist() :
   validation_dataset = dsets.MNIST(root='./data', train=False, download=True, transform= data_transform)
 
   return train_dataset, validation_dataset
+
+#FMNIST_DATASET
+
+def get_datasets_fmnist() :
+  data_transform = transforms.Compose([
+	transforms.Resize(28),
+    	transforms.ToTensor()
+    ])
+	
+#Load the training dataset
+  train_dataset = dsets.FashionMNIST('~/.pytorch/F_MNIST_data', train=True, download=True,transform= tensor_transform)
+
+#Load the validation dataset
+
+  validation_dataset = dsets.FashionMNIST('~/.pytorch/F_MNIST_data', train=False, download=True, transform= tensor_transform)
+
+  return train_dataset, validation_dataset
+	
 
 
 def train_model(model,train_loader,validation_loader, train_dataset, validation_dataset, optimizer, scheduler,criterion,n_epochs):
