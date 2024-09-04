@@ -115,6 +115,8 @@ def get_model(parameterization):
                 emb_dropout = 0.0,
                 pos_emb ='learn'
     )
+    
+  depth = parameterization.get("depth", 2)
 
   #model.load_state_dict(torch.load("model100epoch_mnist.pth"))
 
@@ -212,6 +214,7 @@ best_parameters, values, experiment, model = optimize(
         {"name": "batchsize", "type": "range", "bounds": [20, 120]},
         {"name": "gamma", "type": "range", "bounds": [0.95, 1.0]},
         {"name": "stepsize", "type": "range", "bounds": [1, 3]},
+        {"name": "depth", "type": "range", "bounds": [1, 5]},
         #{"name": "lambda", "type": "range", "bounds": [1e-4, 1e-1], "log_scale": True},
         #{"name": "max_epoch", "type": "range", "bounds": [1, 30]},
         #{"name": "stepsize", "type": "range", "bounds": [20, 40]},
