@@ -74,7 +74,7 @@ class Multihead_Attention(nn.Module):
     self.atten = nn.Softmax(dim = -1)
     self.dropout = nn.Dropout(dropout)
 
-    self.patch_emb = nn.Linear(dim, latent_dim * 3)
+    self.patch_emb = nn.Linear(dim, latent_dim * 3, bias = False)
     self.out_proj = nn.Sequential(
             nn.Linear(latent_dim, dim),
             nn.Dropout(dropout)
