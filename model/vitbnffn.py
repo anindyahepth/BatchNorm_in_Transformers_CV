@@ -180,18 +180,14 @@ class FeedForward(nn.Module):
       
     self.Lin1 = nn.Linear(dim,hidden_dim)
     self.act = nn.GELU()
-    self.norm = = nn.BatchNorm2d(hidden_dim)
-    #self.norm = nn.LayerNorm(hidden_dim)
-    #self.norm = Batch_Norm(hidden_dim)
+    self.norm = Batch_Norm(hidden_dim)
     self.drop = nn.Dropout(dropout)
     self.Lin2 = nn.Linear(hidden_dim, dim)
 
 
   def forward(self, x):
       x = self.Lin1(x)
-      x = rearrange(x, 'b n d -> b d n 1')
       x = self.norm(x)
-      x = rearrange(x, 'b d n 1 -> b n d')
       x = self.act(x)
       x = self.drop(x)
       x = self.Lin2(x)
