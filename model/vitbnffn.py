@@ -180,7 +180,8 @@ class FeedForward(nn.Module):
       
     self.Lin1 = nn.Linear(dim,hidden_dim)
     self.act = nn.GELU()
-    self.norm = Batch_Norm(hidden_dim)
+    self.norm = nn.LayerNorm(hidden_dim)
+    #self.norm = Batch_Norm(hidden_dim)
     self.drop = nn.Dropout(dropout)
     self.Lin2 = nn.Linear(hidden_dim, dim)
 
