@@ -42,10 +42,10 @@ def posemb_sincos_1d(h,dim, temperature: int = 10000, dtype = torch.float32):
 # class Batch_Norm 2d
 
 class Batch_Norm(nn.Module):
-  def __init__(self, feature_dim =1):
+  def __init__(self):
     super().__init__()
 
-    self.BN = nn.BatchNorm2d(feature_dim=1)
+    self.BN = nn.BatchNorm2d(1)
 
   def forward(self, x):
     x = rearrange(x, 'b n d -> b 1 n d')
@@ -180,7 +180,7 @@ class FeedForward(nn.Module):
       
     self.Lin1 = nn.Linear(dim,hidden_dim)
     self.act = nn.GELU()
-    self.norm = Batch_Norm(1)
+    self.norm = Batch_Norm()
     self.drop = nn.Dropout(dropout)
     self.Lin2 = nn.Linear(hidden_dim, dim)
 
