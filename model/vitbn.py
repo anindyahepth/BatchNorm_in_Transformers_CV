@@ -40,17 +40,33 @@ def pair(t):
 #     x = rearrange(x, 'b d n 1 -> b n d')
 #     return x
 
+# class Batch_Norm(nn.Module):
+#   def __init__(self):
+#     super().__init__()
+
+#     self.BN = nn.BatchNorm2d(1)
+
+#   def forward(self, x):
+#     x = rearrange(x, 'b n d -> b 1 n d')
+#     x = self.BN(x)
+#     x = rearrange(x, 'b 1 n d -> b n d')
+#     return x
+
+# class Batch_Norm 2d
+
 class Batch_Norm(nn.Module):
-  def __init__(self):
+  def __init__(self, channels):
     super().__init__()
 
-    self.BN = nn.BatchNorm2d(1)
+    self.BN = nn.BatchNorm2d(channels)
+    self.channels = channels
 
   def forward(self, x):
-    x = rearrange(x, 'b n d -> b 1 n d')
+    b,n,_ = x.shape
+    x = rearrange(x, 'b n (c d) -> b c n d', c = self.channels, n = n)
     x = self.BN(x)
-    x = rearrange(x, 'b 1 n d -> b n d')
-    return x
+    x = rearrange(x, 'b c n d -> b n (c d)')
+    return x 
 
 
 # class PositionalEncoding
@@ -83,7 +99,7 @@ class Multihead_Attention(nn.Module):
 
 
     #self.norm = Batch_Norm(dim)
-    self.norm = Batch_Norm()
+    self.norm = Batch_Norm(1)
     self.atten = nn.Softmax(dim = -1)
     self.dropout = nn.Dropout(dropout)
 
@@ -114,7 +130,7 @@ class FeedForward(nn.Module):
       
     self.Lin1 = nn.Linear(dim,hidden_dim)
     #self.norm = Batch_Norm(hidden_dim)
-    self.norm = Batch_Norm()
+    self.norm = Batch_Norm(1)
     self.act = nn.GELU()
     self.drop = nn.Dropout(dropout)
     self.Lin2 = nn.Linear(hidden_dim, dim)
@@ -135,7 +151,7 @@ class Transformer(nn.Module):
   def __init__(self, dim, depth, heads, dim_head, mlp_dim, dropout = 0.) :
     super().__init__()
     #self.norm = Batch_Norm(dim)
-    self.norm = Batch_Norm()
+    self.norm = Batch_Norm(1)
     self.layers = nn.ModuleList([])
     for _ in range(depth):
       self.layers.append(nn.ModuleList([
@@ -172,9 +188,9 @@ class ViTBN(nn.Module):
 
         self.to_patch_embedding = nn.Sequential(
             Rearrange('b c (h p1) (w p2) -> b (h w) (p1 p2 c)', p1 = patch_height, p2 = patch_width),
-            Batch_Norm(),
+            Batch_Norm(1),
             nn.Linear(patch_dim, dim),
-            Batch_Norm(),
+            Batch_Norm(1),
         )
 
         # self.to_patch_embedding = nn.Sequential(
