@@ -25,28 +25,14 @@ def posemb_sincos_1d(h,dim, temperature: int = 10000, dtype = torch.float32):
     return pe.type(dtype)
 
 
-# class Batch_Norm 1d
-
-# class Batch_Norm(nn.Module):
-#   def __init__(self, feature_dim):
-#     super().__init__()
-
-#     self.BN = nn.BatchNorm1d(feature_dim)
-
-#   def forward(self, x):
-#     x = rearrange(x, 'b n d -> b d n')
-#     x = self.BN(x)
-#     x = rearrange(x, 'b d n -> b n d')
-#     return x
-
 
 # class Batch_Norm 1d
 
-def Batch_Norm(x):
-    _,n,d = x.shape
-    norm = nn.BatchNorm1d(n)
-    x = norm(x)
-    return x, n 
+# def Batch_Norm(x):
+#     _,n,d = x.shape
+#     norm = nn.BatchNorm1d(n)
+#     x = norm(x)
+#     return x, n 
 
 # class Batch_Norm 2d
 
@@ -81,6 +67,21 @@ class Batch_Norm(nn.Module):
     x = self.BN(x)
     x = rearrange(x, 'b c n d -> b n (c d)')
     return x 
+
+# class Batch_Norm 1d
+
+class Batch_Norm(nn.Module):
+  def __init__(self, feature_dim):
+    super().__init__()
+
+    self.BN = nn.BatchNorm1d(feature_dim)
+
+  def forward(self, x):
+    x = rearrange(x, 'b n d -> b d n')
+    x = self.BN(x)
+    x = rearrange(x, 'b d n -> b n d')
+    return x
+
 
 
 # class attention
@@ -210,14 +211,17 @@ class FeedForward(nn.Module):
       
     self.Lin1 = nn.Linear(dim,hidden_dim)
     self.act = nn.GELU()
-    self.norm = Batch_Norm(channels=1)
+    self.BN = nn.BatchNorm1d(hidden_dim)
     self.drop = nn.Dropout(dropout)
     self.Lin2 = nn.Linear(hidden_dim, dim)
 
 
   def forward(self, x):
       x = self.Lin1(x)
-      x = self.norm(x)
+      x = rearrange(x, 'b n d -> b d n')
+      x = self.BN(x)
+      x = rearrange(x, 'b d n -> b n d')
+      #x = self.norm(x)
       #x = nn.BatchNorm1d(x.shape[-2])
       x = self.act(x)
       x = self.drop(x)
