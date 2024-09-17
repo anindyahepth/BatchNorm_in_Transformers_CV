@@ -198,7 +198,7 @@ class ViTBN(nn.Module):
         #     Batch_Norm(patch_dim),
         #     nn.Linear(patch_dim, dim),
         #     Batch_Norm(dim),
-        )
+        #)
 
 
 
