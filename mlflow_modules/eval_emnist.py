@@ -13,7 +13,8 @@ import os
 from datetime import datetime
 from google.colab import files
 
-from model.vitbn import ViTBN
+from model.vitbnffn import ViTBNFFN
+from model.vit_org import ViT
 from emnist_digit_preprocessing import download_emnist
 from emnist_digit_preprocessing import MNISTCustomDataset
 
@@ -25,7 +26,7 @@ mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI"))
 
 
 def get_datasets() :
-  dir_root = '/content/'
+  dir_root = '/content/BatchNorm_in_Transformers_CV/'
   file_dict={
     'test_images':'emnist-digits-test-images-idx3-ubyte.gz',
     'test_labels':'emnist-digits-test-labels-idx1-ubyte.gz'
@@ -80,22 +81,22 @@ def eval_model(model,validation_dataset, validation_loader,n_epochs):
   
 
 def get_model():
-  model = ViTBN(
+  model = ViT(
                 image_size = 28,
                 patch_size = 7,
                 num_classes = 10,
                 channels =1,
                 dim = 64,
-                depth = 6,
+                depth = 9,
                 heads = 8,
                 mlp_dim = 128,
                 pool = 'cls',
                 dropout = 0.0,
                 emb_dropout = 0.0,
-                pos_emb = 'learn'
+                #pos_emb = 'learn'
     )
 
-  model.load_state_dict(torch.load("ViTBN_30_mnist.pth"))
+  model.load_state_dict(torch.load("model_pth_dir/VIT_d9_15.pth"))
 
   return model
 
@@ -109,7 +110,7 @@ if __name__ == "__main__":
     batch_size = 100
     
 
-    with mlflow.start_run(experiment_id=17):
+    with mlflow.start_run(experiment_id=65):
         dataset = get_datasets()
         test_images = dataset[0]
         test_labels = dataset[1]
