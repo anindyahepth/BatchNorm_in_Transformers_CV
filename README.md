@@ -1,6 +1,6 @@
 
-Batch Normalization is a powerful regularization method for Neural Networks which can 
-substantially speed up the learning process in CNNs. On the other hand, LayerNorm is used as 
+Batch Normalization is a powerful regularization method that can 
+substantially speed up the learning process in deep neural networks. On the other hand, LayerNorm is used as 
 the default normalization technique in Transformers. We investigate the impact of Batch Normalization 
 in the most basic Transformer-based model for image classification - the Vision Transformer (ViT). 
 
@@ -10,15 +10,15 @@ We consider two distinct models:
 2. **ViTBN** : This replaces all LayerNorms with BatchNorms.
 
 
-The model ViTBN (and analogously ViTBNFFN) can be used in the following fashion:
+The model ViTBNFFN (and analogously ViTBN) can be used in the following fashion:
 
 ```
-from model.vitbn import ViTBN
+from model.vitbnffn import ViTBNFFN
 
-model = ViTBN(
+model = ViTBNFFN(
                 image_size = 28,
                 patch_size = 7,
-                num_classes = 26,
+                num_classes = 10,
                 channels =1,
                 dim = 64,
                 depth = 6,
