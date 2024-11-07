@@ -36,62 +36,17 @@ by setting the hyperparameter `pool' to 'cls' or 'mean' respectively. One can al
 sinusoidal vector, indicated by setting 'pos_emb ' to 'learn' or 'pe1d' respectively.
 
 
+Training on the MNIST dataset of handwritten digits from scratch, we make the following observations:
 
-For comparing the models using the MNIST dataset, we use the following architectures for the three models:
-```
-ViT(image_size = 28,
-    patch_size = 7,
-    num_classes = 10,
-    channels =1,
-    dim = 64,
-    depth = 6,
-    heads = 8,
-    mlp_dim = 128,
-    pool = 'cls',
-    dropout = 0.0,
-    emb_dropout = 0.0),
+1. For a reasonable choice of hyperparameters, ViTBNFFN does converge faster than ViT, provided the transformer depth (i.e number of layers in the encoder) is sufficiently large.
+2. As one increases the learning rate, ViTBNFFN turns out to be more stable than ViT, especially at larger depths. 
 
-ViTBNFFN(image_size = 28,
-    patch_size = 7,
-    num_classes = 10,
-    channels =1,
-    dim = 64,
-    depth = 1,
-    heads = 8,
-    mlp_dim = 128,
-    pool = 'cls',
-    dropout = 0.0,
-    emb_dropout = 0.0,
-    pos_emb ='learn'),
+As an illustrative example, consider the accuracy curves of the two models trained with learning rate lr=0.003 and batch size 100 for depths d=4,5,6,7.
 
-ViTBN(image_size = 28,
-    patch_size = 7,
-    num_classes = 10,
-    channels =1,
-    dim = 64,
-    depth = 1,
-    heads = 8,
-    mlp_dim = 128,
-    pool = 'cls',
-    dropout = 0.0,
-    emb_dropout = 0.0,
-    pos_emb ='learn')
+![image](https://github.com/user-attachments/assets/3eff49ee-9ac5-4c04-b66c-89eda38a9947)
 
-```
-Note that ViT uses the learnable positional embedding by default if 'pool' = 'cls'. 
-
-Training on the MNIST dataset of handwritten digits from scratch, we see that the models with BatchNorm are 
-about 60% faster than the standard ViT in terms of the average inference time per epoch. 
-The gain in speed for the average training time per epoch can be even higher. 
-
-As an example, consider training and testing the models with the learning rate and the batch size in 
-each case being determined by a Bayesian optimization procedure. The following graphs compare 
-the performances of the optimized models on four metrics as functions of epochs - the training time (in seconds), 
-the testing time (in seconds), the training loss and test accuracy. 
-
-![image](https://github.com/user-attachments/assets/ea3ae9fa-bd91-44c8-a0a2-3807953c8a00)
-
-For the full story, check out the article : https://medium.com/@anindya.hepth/speeding-up-the-vision-transformer-with-batch-normalization-d37f13f20ae7 
+For d=6 and above, the model with BatchNorm achieves a much higher accuracy than the standard ViT. 
+ 
 
 Finally, we train the ViTBNFFN model on the MNIST data for 100 epochs and use the trained model to 
 build a web app with a Flask back-end for recognizing handwritten digits. The webapp can be found 
