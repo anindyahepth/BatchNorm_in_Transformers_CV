@@ -12,6 +12,18 @@ from einops import rearrange, repeat
 from einops.layers.torch import Rearrange
 
 
+class Batch_Norm(nn.Module):
+  def __init__(self, feature_dim):
+    super().__init__()
+
+    self.BN = nn.BatchNorm1d(feature_dim)
+
+  def forward(self, x):
+    x = self.BN(x)
+    return x
+
+
+
 class DNN(nn.Module):
   def __init__(self, input_dim, hidden_dim, num_class, depth):
     super().__init__()
