@@ -1,6 +1,6 @@
 FROM python:3.9
 
-WORKDIR /anindyahepth/BatchNorm_in_Transformers_CV/
+WORKDIR /usr/src/app
 
 # We copy just the requirements.txt first to leverage Docker cache
 COPY ./requirements.txt ./
@@ -13,6 +13,7 @@ ADD ./model ./model
 COPY ./app.py ./app.py
 ADD ./templates ./templates
 ADD ./static ./static
+ADD ./model_pth_dir ./model_pth_dir
 
 EXPOSE 5000
 
