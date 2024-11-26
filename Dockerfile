@@ -10,7 +10,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Let' only copy the required files and folders
 ADD ./model ./model
-COPY ./app.py ./app.py
+COPY ./app.py ./
 ADD ./templates ./templates
 ADD ./static ./static
 ADD ./model_pth_dir ./model_pth_dir
